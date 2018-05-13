@@ -15,7 +15,9 @@ class PumbDataProvider : DataProvider {
         var bankSms = mutableListOf<BankSms>()
 
         val uri = Uri.parse("content://sms/inbox")
+        val ID = "_id"
         val projection = arrayOf(
+                ID,
                 Telephony.TextBasedSmsColumns.THREAD_ID,
                 Telephony.TextBasedSmsColumns.ADDRESS,
                 Telephony.TextBasedSmsColumns.DATE,
@@ -23,8 +25,8 @@ class PumbDataProvider : DataProvider {
                 Telephony.TextBasedSmsColumns.BODY)
         val selection = "${Telephony.TextBasedSmsColumns.ADDRESS} = ?"
         val selectionArgs = arrayOf("PUMB")
-        val limit = "LIMIT 11"
-        val sortOrder = "${Telephony.TextBasedSmsColumns.DATE_SENT} DESC $limit"
+        val limit = "LIMIT 31"
+        val sortOrder = "$ID DESC $limit"
 
         val cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)
 
@@ -42,7 +44,7 @@ class PumbDataProvider : DataProvider {
         cursor.close()
 
         val infoDatePattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")
-        val balancePattern = Pattern.compile("(?<=BALANCE )(\\d+.\\d+]?)(?=UAH)")
+        val balancePattern = Pattern.compile("(?<=BALANCE )([-]?\\d+.\\d+]?)(?=UAH)")
         bankSms.forEach {
             it.parsedCardNumber = it.body.substring(0, 5)
             it.parsedLocation = it.body.substringAfterLast("UAH ")
