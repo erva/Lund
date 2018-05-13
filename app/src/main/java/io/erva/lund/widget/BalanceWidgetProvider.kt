@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.provider.Telephony
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -73,12 +76,24 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
         remoteViews.apply {
             setTextViewText(R.id.card, item.card)
             setTextViewText(R.id.date, "$dateSent $timeSent")
-            setTextViewText(R.id.balance, "%.2f".format(item.balance))
+
+            val balanceText = SpannableString("%.2f".format(item.balance))
+            balanceText.setSpan(RelativeSizeSpan(0.75f),
+                    balanceText.indexOf('.'),
+                    balanceText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+            setTextViewText(R.id.balance, balanceText)
+
             val isPlus = item.difference > 0
-            setTextViewText(R.id.difference,
-                    (if (isPlus) "+" else "") + "%.2f".format(item.difference))
-            setTextColor(R.id.difference, context.getColor(
-                    if (isPlus) R.color.color_income else R.color.color_expense))
+            val diffText = SpannableString((if (isPlus) "+" else "") + "%.2f".format(item.difference))
+            diffText.setSpan(RelativeSizeSpan(0.75f),
+                    diffText.indexOf('.'),
+                    diffText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+            setTextViewText(R.id.difference, diffText)
+            setTextColor(R.id.difference, context.getColor(if (isPlus) R.color.color_income else R.color.color_expense))
 
             val timeDiff = Math.abs(item.dateSent.time - item.parsedDate.time)
             val moreThenDay = timeDiff > RECOST_DELAY
