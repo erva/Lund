@@ -15,8 +15,8 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import io.erva.lund.R
-import io.erva.lund.data.DataItem
 import io.erva.lund.data.DataProviderFactory
+import io.erva.lund.data.mapper.DataItem
 import java.text.SimpleDateFormat
 
 class BalanceWidgetProvider : AppWidgetProvider() {
@@ -67,7 +67,7 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
 
     @SuppressLint("SimpleDateFormat")
     override fun getViewAt(position: Int): RemoteViews {
-        val remoteViews = RemoteViews(context.packageName, R.layout.item_bank_sms)
+        val remoteViews = RemoteViews(context.packageName, R.layout.widget_item_bank_sms)
         val item = items[position]
 
         val dateSent = SimpleDateFormat("MM/dd").format(item.dateSent)
@@ -104,6 +104,6 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
 
     private fun fetchData() {
         items.clear()
-        items.addAll(DataProviderFactory.getDataProvider().provideData(context))
+        items.addAll(DataProviderFactory.getDataProvider(context, DataProviderFactory.PUMB_RECOUNTED)!!.provide())
     }
 }

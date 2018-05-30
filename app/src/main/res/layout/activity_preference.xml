@@ -6,10 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".screen.PreferenceActivity">
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bank_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:listitem="@layout/item_bank"/>
 
 </RelativeLayout>
