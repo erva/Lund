@@ -1,6 +1,6 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.PlainSms
+import io.erva.lund.data.sms.PlainSms
 import java.util.*
 
 data class BankSms(

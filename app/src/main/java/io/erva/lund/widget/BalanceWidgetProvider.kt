@@ -104,6 +104,6 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
 
     private fun fetchData() {
         items.clear()
-        items.addAll(DataProviderFactory.getDataProvider(context, DataProviderFactory.PUMB_RECOUNTED)!!.provide())
+        items.addAll(DataProviderFactory.getDataProvider(context, DataProviderFactory.PUMB)!!.provide())
     }
 }

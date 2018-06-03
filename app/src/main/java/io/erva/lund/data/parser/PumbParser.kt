@@ -1,6 +1,6 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.PlainSms
+import io.erva.lund.data.sms.PlainSms
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 

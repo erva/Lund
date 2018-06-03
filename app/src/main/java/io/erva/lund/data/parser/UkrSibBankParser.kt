@@ -1,6 +1,6 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.PlainSms
+import io.erva.lund.data.sms.PlainSms
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
@@ -35,7 +35,6 @@ class UkrSibBankParser : BankSmsParser {
         if (balanceMatcher.find()) {
             bankSms.parsedBalance = balanceMatcher.group(0).toDouble()
         }
-
 
         val isAllSet = !bankSms.parsedCardNumber.isNullOrEmpty() &&
                 bankSms.parsedInfoDate != null &&

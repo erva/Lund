@@ -6,6 +6,7 @@ import io.erva.lund.R
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.parser.BankSmsParser
+import io.erva.lund.data.sms.SmsProvider
 
 class DataProvider(
         private val context: Context,
