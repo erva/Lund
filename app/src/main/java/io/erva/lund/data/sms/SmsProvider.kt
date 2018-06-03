@@ -3,12 +3,14 @@ package io.erva.lund.data.sms
 import android.content.Context
 import android.net.Uri
 import android.provider.Telephony.TextBasedSmsColumns.*
+import timber.log.Timber
 
 class SmsProvider {
 
     companion object {
 
         fun providePlainSms(context: Context, address: String, limit: Int = 31): List<PlainSms> {
+            Timber.d("providePlainSms address %s", address)
             val bankSms = mutableListOf<PlainSms>()
 
             val uri = Uri.parse("content://sms/inbox")

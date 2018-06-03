@@ -17,13 +17,17 @@ import android.widget.RemoteViewsService
 import io.erva.lund.R
 import io.erva.lund.data.DataProviderFactory
 import io.erva.lund.data.mapper.DataItem
+import io.erva.lund.storage.PrefStorage
+import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.util.*
 
 class BalanceWidgetProvider : AppWidgetProvider() {
 
     private val updateHandler = Handler()
 
     override fun onReceive(context: Context, intent: Intent) {
+        Timber.d("->")
         if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
             updateHandler.postDelayed({
                 val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -35,28 +39,42 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        Timber.d(Arrays.toString(appWidgetIds))
         appWidgetIds.forEach {
+            Timber.d("update %d", it)
             val remoteView = RemoteViews(context.packageName, R.layout.widget_bank_sms)
-            remoteView.setRemoteAdapter(R.id.item_list, Intent(context, BalanceAdapterService::class.java))
-            appWidgetManager.updateAppWidget(it, remoteView);
+            val adapterIntent = Intent(context, BalanceAdapterService::class.java)
+            adapterIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, it);
+            remoteView.setRemoteAdapter(R.id.item_list, adapterIntent)
+            appWidgetManager.updateAppWidget(it, remoteView)
             appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.item_list);
+        }
+    }
+
+    override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
+        context?.let {
+            appWidgetIds?.forEach {
+                Timber.d("delete %d", it)
+                PrefStorage().removeWidgetBank(context, it)
+            }
         }
     }
 }
 
 class BalanceAdapterService : RemoteViewsService() {
 
-    override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
-        return BalanceListFactory(applicationContext)
+    override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
+        Timber.d("->")
+        return BalanceListFactory(applicationContext, intent)
     }
 }
 
-class BalanceListFactory(private val context: Context) : RemoteViewsService.RemoteViewsFactory {
+class BalanceListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
 
     private val RECOST_DELAY = 2 * 60 * 60 * 1000
     private val items: MutableList<DataItem> = mutableListOf()
 
-    override fun onCreate() = Unit
+    override fun onCreate(): Unit = Timber.d("->")
     override fun getLoadingView() = null
     override fun getItemId(position: Int) = position.toLong()
     override fun onDataSetChanged() = fetchData()
@@ -64,6 +82,16 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
     override fun getCount() = items.size
     override fun getViewTypeCount() = 1
     override fun onDestroy() = Unit
+
+    private fun fetchData() {
+        Timber.d("->")
+        items.clear()
+
+        val widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+        val data = PrefStorage().getWidgetBank(context, widgetId)
+        Timber.d("fetch for widgetId %d, bank %s", widgetId, data.name)
+        DataProviderFactory.getDataProvider(context, data)?.let { items.addAll(it.provide()) }
+    }
 
     @SuppressLint("SimpleDateFormat")
     override fun getViewAt(position: Int): RemoteViews {
@@ -100,10 +128,5 @@ class BalanceListFactory(private val context: Context) : RemoteViewsService.Remo
             setViewVisibility(R.id.recost, if (moreThenDay) View.VISIBLE else View.GONE)
         }
         return remoteViews
-    }
-
-    private fun fetchData() {
-        items.clear()
-        items.addAll(DataProviderFactory.getDataProvider(context, DataProviderFactory.PUMB)!!.provide())
     }
 }

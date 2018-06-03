@@ -14,7 +14,8 @@ import io.erva.celladapter.Cell
 import io.erva.celladapter.CellAdapter
 import io.erva.lund.R
 import io.erva.lund.data.Data
-import kotlinx.android.synthetic.main.activity_preference.*
+import io.erva.lund.storage.PrefStorage
+import timber.log.Timber
 
 class PreferenceActivity : AppCompatActivity() {
 
@@ -25,7 +26,7 @@ class PreferenceActivity : AppCompatActivity() {
             item(BankItemModel::class)
             listener(object : Cell.Listener<BankItemModel> {
                 override fun onCellClicked(item: BankItemModel) {
-
+                    onProviderSelected(item.data)
                 }
             })
         }
@@ -34,31 +35,17 @@ class PreferenceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preference)
-
-        if (!isSmsPermissionGranted()) {
-            requestReadAndSendSmsPermission()
-        }
-
-        bank_list.layoutManager = LinearLayoutManager(this)
-        bank_list.adapter = adapter
-        adapter.items.addAll(Data.values().map { BankItemModel(it.bankName, it.bankIcon, it) })
-        adapter.notifyDataSetChanged()
+        Timber.d("->")
+        checkPermissions()
     }
 
-    var mAppWidgetId: Int? = null
-    private fun m() {
-        val intent = intent
-        val extras = intent.extras
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID)
+    //region permissions
+    private fun checkPermissions() {
+        if (!isSmsPermissionGranted()) {
+            requestReadAndSendSmsPermission()
+        } else {
+            showProviders()
         }
-
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
-        setResult(Activity.RESULT_OK, resultValue)
-        finish()
     }
 
     private fun isSmsPermissionGranted(): Boolean {
@@ -74,10 +61,48 @@ class PreferenceActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_SMS_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    m()
+                    showProviders()
                 } else {
+                    onCanceled()
                 }
             }
         }
+    }
+    //endregion
+
+    private fun showProviders() {
+        Timber.d("->")
+        bank_list.layoutManager = LinearLayoutManager(this)
+        bank_list.adapter = adapter
+        adapter.items.addAll(arrayOf(
+                BankItemModel("PUMB", R.drawable.ic_bannk_pumb, Data.PUMB),
+                BankItemModel("UkrSib Bank", R.drawable.ic_bank_ukrsib, Data.UKRSIBBANK)
+        ))
+        adapter.notifyDataSetChanged()
+    }
+
+
+    private fun onProviderSelected(data: Data) {
+        Timber.d("->")
+        val intent = intent
+        intent.extras?.apply {
+            val appWidgetId = getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            PrefStorage().saveWidgetBank(applicationContext, appWidgetId, data)
+            val resultValue = Intent()
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(Activity.RESULT_OK, resultValue)
+            Timber.d("Widget id = %d", appWidgetId)
+
+            val forceUpdateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            forceUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, arrayOf(appWidgetId))
+            sendBroadcast(forceUpdateIntent)
+
+            finish()
+        }
+    }
+
+    private fun onCanceled() {
+        Timber.d("->")
+        finish()
     }
 }

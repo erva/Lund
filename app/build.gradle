@@ -12,8 +12,13 @@ android {
         versionName "1.0"
     }
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+            applicationIdSuffix ".debug"
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -24,4 +29,11 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.github.erva.CellAdapter:celladapter-kotlin:2.0.4'
+    implementation 'com.jakewharton.timber:timber:4.7.0'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:recyclerview-v7:27.1.1'
+    }
 }
