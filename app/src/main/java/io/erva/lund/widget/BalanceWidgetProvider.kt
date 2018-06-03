@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.provider.Telephony
 import android.text.Spannable
@@ -44,7 +45,7 @@ class BalanceWidgetProvider : AppWidgetProvider() {
             Timber.d("update %d", it)
             val remoteView = RemoteViews(context.packageName, R.layout.widget_bank_sms)
             val adapterIntent = Intent(context, BalanceAdapterService::class.java)
-            adapterIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, it);
+            adapterIntent.data = Uri.fromParts("content", it.toString(), null)
             remoteView.setRemoteAdapter(R.id.item_list, adapterIntent)
             appWidgetManager.updateAppWidget(it, remoteView)
             appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.item_list);
@@ -87,9 +88,9 @@ class BalanceListFactory(private val context: Context, private val intent: Inten
         Timber.d("->")
         items.clear()
 
-        val widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-        val data = PrefStorage().getWidgetBank(context, widgetId)
-        Timber.d("fetch for widgetId %d, bank %s", widgetId, data.name)
+        val appWidgetId = Integer.valueOf(intent.data.schemeSpecificPart)
+        val data = PrefStorage().getWidgetBank(context, appWidgetId)
+        Timber.d("fetch for widgetId %d, bank %s", appWidgetId, data.name)
         DataProviderFactory.getDataProvider(context, data)?.let { items.addAll(it.provide()) }
     }
 
