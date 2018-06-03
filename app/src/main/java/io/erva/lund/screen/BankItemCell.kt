@@ -4,6 +4,7 @@ import android.view.View
 import io.erva.celladapter.Cell
 import io.erva.celladapter.Layout
 import io.erva.lund.R
+import kotlinx.android.synthetic.main.item_bank.view.*
 
 @Layout(R.layout.item_bank)
 class BankItemCell(view: View) : Cell<BankItemModel, Cell.Listener<BankItemModel>>(view) {

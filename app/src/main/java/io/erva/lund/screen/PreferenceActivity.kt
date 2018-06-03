@@ -15,6 +15,7 @@ import io.erva.celladapter.CellAdapter
 import io.erva.lund.R
 import io.erva.lund.data.Data
 import io.erva.lund.storage.PrefStorage
+import kotlinx.android.synthetic.main.activity_preference.*
 import timber.log.Timber
 
 class PreferenceActivity : AppCompatActivity() {
