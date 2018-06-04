@@ -19,16 +19,13 @@ import io.erva.lund.R
 import io.erva.lund.data.DataProviderFactory
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.storage.PrefStorage
-import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.*
 
 class BalanceWidgetProvider : AppWidgetProvider() {
 
     private val updateHandler = Handler()
 
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.d("->")
         if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
             updateHandler.postDelayed({
                 val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -40,9 +37,7 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        Timber.d(Arrays.toString(appWidgetIds))
         appWidgetIds.forEach {
-            Timber.d("update %d", it)
             val remoteView = RemoteViews(context.packageName, R.layout.widget_bank_sms)
             val adapterIntent = Intent(context, BalanceAdapterService::class.java)
             adapterIntent.data = Uri.fromParts("content", it.toString(), null)
@@ -55,7 +50,6 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
         context?.let {
             appWidgetIds?.forEach {
-                Timber.d("delete %d", it)
                 PrefStorage().removeWidgetBank(context, it)
             }
         }
@@ -65,7 +59,6 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 class BalanceAdapterService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
-        Timber.d("->")
         return BalanceListFactory(applicationContext, intent)
     }
 }
@@ -75,7 +68,7 @@ class BalanceListFactory(private val context: Context, private val intent: Inten
     private val RECOST_DELAY = 2 * 60 * 60 * 1000
     private val items: MutableList<DataItem> = mutableListOf()
 
-    override fun onCreate(): Unit = Timber.d("->")
+    override fun onCreate() = Unit
     override fun getLoadingView() = null
     override fun getItemId(position: Int) = position.toLong()
     override fun onDataSetChanged() = fetchData()
@@ -85,12 +78,10 @@ class BalanceListFactory(private val context: Context, private val intent: Inten
     override fun onDestroy() = Unit
 
     private fun fetchData() {
-        Timber.d("->")
         items.clear()
 
         val appWidgetId = Integer.valueOf(intent.data.schemeSpecificPart)
         val data = PrefStorage().getWidgetBank(context, appWidgetId)
-        Timber.d("fetch for widgetId %d, bank %s", appWidgetId, data.name)
         DataProviderFactory.getDataProvider(context, data)?.let { items.addAll(it.provide()) }
     }
 

@@ -16,7 +16,6 @@ import io.erva.lund.R
 import io.erva.lund.data.Data
 import io.erva.lund.storage.PrefStorage
 import kotlinx.android.synthetic.main.activity_preference.*
-import timber.log.Timber
 
 class PreferenceActivity : AppCompatActivity() {
 
@@ -36,7 +35,6 @@ class PreferenceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preference)
-        Timber.d("->")
         checkPermissions()
     }
 
@@ -72,7 +70,6 @@ class PreferenceActivity : AppCompatActivity() {
     //endregion
 
     private fun showProviders() {
-        Timber.d("->")
         bank_list.layoutManager = LinearLayoutManager(this)
         bank_list.adapter = adapter
         adapter.items.addAll(arrayOf(
@@ -84,7 +81,6 @@ class PreferenceActivity : AppCompatActivity() {
 
 
     private fun onProviderSelected(data: Data) {
-        Timber.d("->")
         val intent = intent
         intent.extras?.apply {
             val appWidgetId = getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
@@ -92,7 +88,6 @@ class PreferenceActivity : AppCompatActivity() {
             val resultValue = Intent()
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             setResult(Activity.RESULT_OK, resultValue)
-            Timber.d("Widget id = %d", appWidgetId)
 
             val forceUpdateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
             forceUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, arrayOf(appWidgetId))
@@ -103,7 +98,6 @@ class PreferenceActivity : AppCompatActivity() {
     }
 
     private fun onCanceled() {
-        Timber.d("->")
         finish()
     }
 }
