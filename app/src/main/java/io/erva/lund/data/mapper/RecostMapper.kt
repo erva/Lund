@@ -13,7 +13,7 @@ import java.util.*
  * 5. Blocked amount has written-offs after some time but it is different amount A with step 3
  * 6. As result one more income or outcome bank operation
  */
-class RecountedMapper : DataMapper {
+class RecostMapper : DataMapper {
 
     override fun map(parsedSmsList: List<BankSms>): List<DataItem> {
         val size = parsedSmsList.size
