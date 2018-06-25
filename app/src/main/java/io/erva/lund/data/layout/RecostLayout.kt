@@ -18,7 +18,7 @@ class RecostLayout : Layout {
     @SuppressLint("SimpleDateFormat")
     override fun layoutData(context: Context, item: DataItem): RemoteViews {
 
-        val remoteViews = RemoteViews(context.packageName, R.layout.widget_item_transaction_recost)
+        val remoteViews = RemoteViews(context.packageName, R.layout.widget_transaction_item_recost)
 
         val dateSent = SimpleDateFormat("MM/dd").format(item.dateSent)
         val timeSent = SimpleDateFormat("HH:mm").format(item.dateSent)

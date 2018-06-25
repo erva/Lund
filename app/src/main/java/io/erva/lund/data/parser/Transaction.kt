@@ -3,7 +3,7 @@ package io.erva.lund.data.parser
 import io.erva.lund.data.sms.PlainSms
 import java.util.*
 
-data class BankSms(
+data class Transaction(
         val plainSms: PlainSms,
         var parsedCardNumber: String? = null,
         var parsedInfoDate: Date? = null,

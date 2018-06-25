@@ -34,12 +34,12 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach {
-            val remoteView = RemoteViews(context.packageName, R.layout.widget_bank_sms)
-            val adapterIntent = Intent(context, BalanceAdapterService::class.java)
+            val remoteView = RemoteViews(context.packageName, R.layout.widget_transactions)
+            val adapterIntent = Intent(context, TransactionsAdapterService::class.java)
             adapterIntent.data = Uri.fromParts("content", it.toString(), null)
-            remoteView.setRemoteAdapter(R.id.item_list, adapterIntent)
+            remoteView.setRemoteAdapter(R.id.widget_transactions_list, adapterIntent)
             appWidgetManager.updateAppWidget(it, remoteView)
-            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.item_list);
+            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.widget_transactions_list);
         }
     }
 
@@ -52,14 +52,14 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }
 }
 
-class BalanceAdapterService : RemoteViewsService() {
+class TransactionsAdapterService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
-        return BalanceListFactory(applicationContext, intent)
+        return TransactionsListFactory(applicationContext, intent)
     }
 }
 
-class BalanceListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
+class TransactionsListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
 
     private val items: MutableList<DataItem> = mutableListOf()
     private lateinit var dataProvider: DataProvider

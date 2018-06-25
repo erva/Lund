@@ -6,15 +6,19 @@ import io.erva.lund.data.layout.RecostLayout
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.mapper.RecostMapper
-import io.erva.lund.data.parser.BankSmsParser
+import io.erva.lund.data.parser.PlainSmsParser
 import io.erva.lund.data.parser.PrivatBankParser
 import io.erva.lund.data.parser.PumbParser
 import io.erva.lund.data.parser.UkrSibBankParser
 import io.erva.lund.data.sms.SmsProvider
 
+enum class Data {
+    PUMB, PRIVATBANK, UKRSIBBANK, UNDEFINED
+}
+
 /**
- * Fetch sms    -> parse in sms pojo    -> calc difference with previous
- * PlainSms     -> BankSms              -> DataItem
+ * Fetch sms    -> parse in pojo    -> calc difference with previous
+ * PlainSms     -> Transactions     -> DataItem
  */
 class DataProviderFactory {
 
@@ -33,7 +37,7 @@ class DataProviderFactory {
 class DataProvider(
         private val context: Context,
         private val address: String,
-        private val parser: BankSmsParser,
+        private val parser: PlainSmsParser,
         private val mapper: DataMapper,
         private val layout: Layout) {
 
@@ -45,9 +49,4 @@ class DataProvider(
                         .mapNotNull { parser.parse(it) }
         )
     }
-
-}
-
-enum class Data {
-    PUMB, PRIVATBANK, UKRSIBBANK, UNDEFINED
 }

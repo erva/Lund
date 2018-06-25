@@ -1,6 +1,6 @@
 package io.erva.lund.data.mapper
 
-import io.erva.lund.data.parser.BankSms
+import io.erva.lund.data.parser.Transaction
 import java.util.*
 
 /**
@@ -15,19 +15,19 @@ import java.util.*
  */
 class RecostMapper : DataMapper {
 
-    override fun map(parsedSmsList: List<BankSms>): List<DataItem> {
-        val size = parsedSmsList.size
+    override fun map(transactions: List<Transaction>): List<DataItem> {
+        val size = transactions.size
         val dataItems = mutableListOf<DataItem>()
         for (i in 0 until size - 1) {
-            val previous = parsedSmsList[i + 1].parsedBalance!!
-            val current = parsedSmsList[i].parsedBalance!!
+            val previous = transactions[i + 1].parsedBalance!!
+            val current = transactions[i].parsedBalance!!
             val difference = current - previous
             dataItems.add(DataItem(
-                    parsedSmsList[i].parsedCardNumber!!,
-                    Date(parsedSmsList[i].plainSms.dateSent),
+                    transactions[i].parsedCardNumber!!,
+                    Date(transactions[i].plainSms.dateSent),
                     difference,
                     current,
-                    parsedSmsList[i].parsedInfoDate!!
+                    transactions[i].parsedInfoDate!!
             ))
         }
         return dataItems
