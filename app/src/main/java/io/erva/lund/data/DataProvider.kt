@@ -5,6 +5,7 @@ import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.mapper.RecountedMapper
 import io.erva.lund.data.parser.BankSmsParser
+import io.erva.lund.data.parser.PrivatBankParser
 import io.erva.lund.data.parser.PumbParser
 import io.erva.lund.data.parser.UkrSibBankParser
 import io.erva.lund.data.sms.SmsProvider
@@ -19,6 +20,7 @@ class DataProviderFactory {
         fun getDataProvider(context: Context, data: Data): DataProvider? {
             return when (data) {
                 Data.PUMB -> DataProvider(context, "PUMB", PumbParser(), RecountedMapper())
+                Data.PRIVATBANK -> DataProvider(context, "PrivatBank", PrivatBankParser(), RecountedMapper())
                 Data.UKRSIBBANK -> DataProvider(context, "UKRSIBBANK", UkrSibBankParser(), RecountedMapper())
                 else -> null
             }
@@ -41,5 +43,5 @@ class DataProvider(
 }
 
 enum class Data {
-    PUMB, UKRSIBBANK, UNDEFINED
+    PUMB, PRIVATBANK, UKRSIBBANK, UNDEFINED
 }
