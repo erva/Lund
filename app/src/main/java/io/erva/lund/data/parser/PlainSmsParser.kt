@@ -5,7 +5,7 @@ import io.erva.lund.data.sms.PlainSms
 /**
  * https://regex101.com/
  */
-interface BankSmsParser {
+interface PlainSmsParser {
 
-    fun parse(plainSms: PlainSms): BankSms?
+    fun parse(plainSms: PlainSms): Transaction?
 }

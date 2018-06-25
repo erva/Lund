@@ -1,8 +1,8 @@
 package io.erva.lund.data.mapper
 
-import io.erva.lund.data.parser.BankSms
+import io.erva.lund.data.parser.Transaction
 
 interface DataMapper {
 
-    fun map(parsedSmsList: List<BankSms>): List<DataItem>
+    fun map(parsedSmsList: List<Transaction>): List<DataItem>
 }

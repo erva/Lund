@@ -33,11 +33,11 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_bank_sms">
+                android:resource="@xml/widget_transactions">
             </meta-data>
         </receiver>
         <service
-            android:name="io.erva.lund.widget.BalanceAdapterService"
+            android:name="io.erva.lund.widget.TransactionsAdapterService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
 

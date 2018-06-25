@@ -2,7 +2,7 @@
 <appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:configure="io.erva.lund.screen.PreferenceActivity"
-    android:initialLayout="@layout/widget_bank_sms"
+    android:initialLayout="@layout/widget_transactions"
     android:minHeight="40dp"
     android:minWidth="180dp"
     android:resizeMode="vertical|horizontal"

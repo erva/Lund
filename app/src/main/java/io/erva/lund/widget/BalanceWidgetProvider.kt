@@ -9,17 +9,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.provider.Telephony
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.RelativeSizeSpan
-import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import io.erva.lund.R
+import io.erva.lund.data.DataProvider
 import io.erva.lund.data.DataProviderFactory
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.storage.PrefStorage
-import java.text.SimpleDateFormat
 
 class BalanceWidgetProvider : AppWidgetProvider() {
 
@@ -38,12 +34,12 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach {
-            val remoteView = RemoteViews(context.packageName, R.layout.widget_bank_sms)
-            val adapterIntent = Intent(context, BalanceAdapterService::class.java)
+            val remoteView = RemoteViews(context.packageName, R.layout.widget_transactions)
+            val adapterIntent = Intent(context, TransactionsAdapterService::class.java)
             adapterIntent.data = Uri.fromParts("content", it.toString(), null)
-            remoteView.setRemoteAdapter(R.id.item_list, adapterIntent)
+            remoteView.setRemoteAdapter(R.id.widget_transactions_list, adapterIntent)
             appWidgetManager.updateAppWidget(it, remoteView)
-            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.item_list);
+            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.widget_transactions_list);
         }
     }
 
@@ -56,17 +52,17 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }
 }
 
-class BalanceAdapterService : RemoteViewsService() {
+class TransactionsAdapterService : RemoteViewsService() {
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
-        return BalanceListFactory(applicationContext, intent)
+        return TransactionsListFactory(applicationContext, intent)
     }
 }
 
-class BalanceListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
+class TransactionsListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
 
-    private val RECOST_DELAY = 2 * 60 * 60 * 1000
     private val items: MutableList<DataItem> = mutableListOf()
+    private lateinit var dataProvider: DataProvider
 
     override fun onCreate() = Unit
     override fun getLoadingView() = null
@@ -79,46 +75,12 @@ class BalanceListFactory(private val context: Context, private val intent: Inten
 
     private fun fetchData() {
         items.clear()
-
         val appWidgetId = Integer.valueOf(intent.data.schemeSpecificPart)
         val data = PrefStorage().getWidgetBank(context, appWidgetId)
-        DataProviderFactory.getDataProvider(context, data)?.let { items.addAll(it.provide()) }
+        dataProvider = DataProviderFactory.getDataProvider(context, data)
+        items.addAll(dataProvider.provide())
     }
 
     @SuppressLint("SimpleDateFormat")
-    override fun getViewAt(position: Int): RemoteViews {
-        val remoteViews = RemoteViews(context.packageName, R.layout.widget_item_bank_sms)
-        val item = items[position]
-
-        val dateSent = SimpleDateFormat("MM/dd").format(item.dateSent)
-        val timeSent = SimpleDateFormat("HH:mm").format(item.dateSent)
-
-        remoteViews.apply {
-            setTextViewText(R.id.card, item.card)
-            setTextViewText(R.id.date, "$dateSent $timeSent")
-
-            val balanceText = SpannableString("%.2f".format(item.balance))
-            balanceText.setSpan(RelativeSizeSpan(0.75f),
-                    balanceText.indexOf('.'),
-                    balanceText.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-            setTextViewText(R.id.balance, balanceText)
-
-            val isPlus = item.difference > 0
-            val diffText = SpannableString((if (isPlus) "+" else "") + "%.2f".format(item.difference))
-            diffText.setSpan(RelativeSizeSpan(0.75f),
-                    diffText.indexOf('.'),
-                    diffText.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-            setTextViewText(R.id.difference, diffText)
-            setTextColor(R.id.difference, context.getColor(if (isPlus) R.color.color_income else R.color.color_expense))
-
-            val timeDiff = Math.abs(item.dateSent.time - item.parsedDate.time)
-            val moreThenDay = timeDiff > RECOST_DELAY
-            setViewVisibility(R.id.recost, if (moreThenDay) View.VISIBLE else View.GONE)
-        }
-        return remoteViews
-    }
+    override fun getViewAt(position: Int): RemoteViews = dataProvider.getLayout().layoutData(context, items[position])
 }
