@@ -75,7 +75,8 @@ class PreferenceActivity : AppCompatActivity() {
         adapter.items.addAll(arrayOf(
                 BankItemModel("PUMB", R.drawable.ic_bannk_pumb, Data.PUMB),
                 BankItemModel("Privat bank", R.drawable.ic_bank_privat, Data.PRIVATBANK),
-                BankItemModel("UkrSib bank", R.drawable.ic_bank_ukrsib, Data.UKRSIBBANK)
+                BankItemModel("UkrSib bank", R.drawable.ic_bank_ukrsib, Data.UKRSIBBANK),
+                BankItemModel("Raiffeisen Bank Aval", R.drawable.ic_bank_aval, Data.AVALBANK)
         ))
         adapter.notifyDataSetChanged()
     }

@@ -6,14 +6,11 @@ import io.erva.lund.data.layout.RecostLayout
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.mapper.RecostMapper
-import io.erva.lund.data.parser.PlainSmsParser
-import io.erva.lund.data.parser.PrivatBankParser
-import io.erva.lund.data.parser.PumbParser
-import io.erva.lund.data.parser.UkrSibBankParser
+import io.erva.lund.data.parser.*
 import io.erva.lund.data.sms.SmsProvider
 
 enum class Data {
-    PUMB, PRIVATBANK, UKRSIBBANK, UNDEFINED
+    PUMB, PRIVATBANK, UKRSIBBANK, AVALBANK, UNDEFINED
 }
 
 /**
@@ -28,6 +25,7 @@ class DataProviderFactory {
                 Data.PUMB -> DataProvider(context, "PUMB", PumbParser(), RecostMapper(), RecostLayout())
                 Data.PRIVATBANK -> DataProvider(context, "PrivatBank", PrivatBankParser(), RecostMapper(), RecostLayout())
                 Data.UKRSIBBANK -> DataProvider(context, "UKRSIBBANK", UkrSibBankParser(), RecostMapper(), RecostLayout())
+                Data.AVALBANK -> DataProvider(context, "10901" /*"Raiffeisen"*/, AvalBankParser(), RecostMapper(), RecostLayout())
                 else -> throw IllegalArgumentException()
             }
         }

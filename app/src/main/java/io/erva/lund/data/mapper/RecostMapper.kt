@@ -15,6 +15,8 @@ import java.util.*
  */
 class RecostMapper : DataMapper {
 
+    private val RECOST_DELAY = 2 * 60 * 60 * 1000
+
     override fun map(transactions: List<Transaction>): List<DataItem> {
         val size = transactions.size
         val dataItems = mutableListOf<DataItem>()
@@ -22,12 +24,17 @@ class RecostMapper : DataMapper {
             val previous = transactions[i + 1].parsedBalance!!
             val current = transactions[i].parsedBalance!!
             val difference = current - previous
+
+            val dateSent = Date(transactions[i].plainSms.dateSent)
+            val parsedDate = transactions[i].parsedInfoDate!!
+
             dataItems.add(DataItem(
-                    transactions[i].parsedCardNumber!!,
-                    Date(transactions[i].plainSms.dateSent),
-                    difference,
-                    current,
-                    transactions[i].parsedInfoDate!!
+                    card = transactions[i].parsedCardNumber!!,
+                    dateSent = dateSent,
+                    difference = difference,
+                    balance = current,
+                    parsedDate = parsedDate,
+                    recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY
             ))
         }
         return dataItems

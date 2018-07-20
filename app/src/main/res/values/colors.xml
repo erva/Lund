@@ -6,7 +6,8 @@
 
     <color name="color_income">#08c708</color>
     <color name="color_expense">#FF0000</color>
-    <color name="color_widget_divider">#aabcbaba</color>
-    <color name="color_widget_text">#ffffffff</color>
-    <color name="color_widget_text_secondary">#aabcbaba</color>
+    <color name="color_same">#FFFFFF</color>
+    <color name="color_widget_divider">#AABCBABA</color>
+    <color name="color_widget_text">#FFFFFF</color>
+    <color name="color_widget_text_secondary">#AABCBABA</color>
 </resources>

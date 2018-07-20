@@ -7,4 +7,5 @@ data class DataItem(
         val dateSent: Date,
         val difference: Double,
         val balance: Double,
-        val parsedDate: Date)
+        val parsedDate: Date,
+        val recost: Boolean)
