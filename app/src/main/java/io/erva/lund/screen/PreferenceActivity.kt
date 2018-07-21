@@ -81,7 +81,6 @@ class PreferenceActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-
     private fun onProviderSelected(data: Data) {
         val intent = intent
         intent.extras?.apply {

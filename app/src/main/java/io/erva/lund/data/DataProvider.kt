@@ -1,13 +1,13 @@
 package io.erva.lund.data
 
 import android.content.Context
-import io.erva.lund.widget.layout.Layout
-import io.erva.lund.widget.layout.RecostLayout
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.mapper.RecostMapper
 import io.erva.lund.data.parser.*
 import io.erva.lund.data.sms.SmsProvider
+import io.erva.lund.widget.layout.Layout
+import io.erva.lund.widget.layout.RecostLayout
 
 enum class Data {
     PUMB, PRIVATBANK, UKRSIBBANK, AVALBANK, UNDEFINED
