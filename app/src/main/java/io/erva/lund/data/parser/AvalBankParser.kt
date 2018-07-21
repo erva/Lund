@@ -12,8 +12,6 @@ class AvalBankParser : PlainSmsParser {
         val balancePattern = Pattern.compile("(?<=zalyshok|sum\\w) ([-]?\\d+.\\d+]?)(?= UAH)")
         val cardNumberPattern = Pattern.compile("(?<=\\/|\\*)\\d{4}|\\d{4}(?=\\(UAH\\))")
 
-        transaction.parsedCardNumber = plainSms.body.substring(0, 5)
-
         val infoDateMatcher = infoDatePattern.matcher(plainSms.body)
         if (infoDateMatcher.find()) {
             val date = infoDateMatcher.group(0)

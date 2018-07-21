@@ -4,12 +4,6 @@ import io.erva.lund.data.sms.PlainSms
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
-/**
-30.38USD Predavtorizaciya: UBER   *TRIP GFVQQ
-5*37 06:26
-Bal. 3250.47UAH
-Kurs 26.3156 UAH/USD
- */
 class PrivatBankParser : PlainSmsParser {
 
     override fun parse(plainSms: PlainSms): Transaction? {
@@ -42,8 +36,7 @@ class PrivatBankParser : PlainSmsParser {
 
         val isAllSet = !transaction.parsedCardNumber.isNullOrEmpty() &&
                 transaction.parsedInfoDate != null &&
-                transaction.parsedBalance != null &&
-                !transaction.parsedLocation.isNullOrEmpty()
+                transaction.parsedBalance != null
 
         return if (isAllSet) transaction else null
     }
