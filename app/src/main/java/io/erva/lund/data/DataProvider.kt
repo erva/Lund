@@ -1,8 +1,8 @@
 package io.erva.lund.data
 
 import android.content.Context
-import io.erva.lund.data.layout.Layout
-import io.erva.lund.data.layout.RecostLayout
+import io.erva.lund.widget.layout.Layout
+import io.erva.lund.widget.layout.RecostLayout
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.mapper.DataMapper
 import io.erva.lund.data.mapper.RecostMapper

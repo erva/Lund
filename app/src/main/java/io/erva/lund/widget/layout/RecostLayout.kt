@@ -1,4 +1,4 @@
-package io.erva.lund.data.layout
+package io.erva.lund.widget.layout
 
 import android.annotation.SuppressLint
 import android.content.Context
