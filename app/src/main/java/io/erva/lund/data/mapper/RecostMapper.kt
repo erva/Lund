@@ -13,28 +13,33 @@ import java.util.*
  * 5. Blocked amount has written-offs after some time but it is different amount A with step 3
  * 6. As result one more income or outcome bank operation
  */
-class RecostMapper : DataMapper {
 
-    private val RECOST_DELAY = 2 * 60 * 60 * 1000
+private const val RECOST_DELAY = 2 * 60 * 60 * 1000
+
+class RecostMapper : DataMapper {
 
     override fun map(transactions: List<Transaction>): List<DataItem> {
         val size = transactions.size
         val dataItems = mutableListOf<DataItem>()
         for (i in 0 until size - 1) {
+            val transaction = transactions[i]
+
             val previous = transactions[i + 1].parsedBalance!!
-            val current = transactions[i].parsedBalance!!
+            val current = transaction.parsedBalance!!
             val difference = current - previous
 
-            val dateSent = Date(transactions[i].plainSms.dateSent)
-            val parsedDate = transactions[i].parsedInfoDate!!
+            val dateSent = Date(transaction.plainSms.dateSent)
+            val parsedDate = transaction.parsedInfoDate!!
 
             dataItems.add(DataItem(
-                    card = transactions[i].parsedCardNumber!!,
+                    address = transaction.plainSms.address,
+                    card = transaction.parsedCardNumber!!,
                     dateSent = dateSent,
                     difference = difference,
                     balance = current,
                     parsedDate = parsedDate,
-                    recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY
+                    recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY,
+                    location = transaction.parsedLocation
             ))
         }
         return dataItems

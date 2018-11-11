@@ -2,6 +2,7 @@ package io.erva.lund.widget.layout
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
@@ -16,7 +17,7 @@ import java.util.*
 class RecostLayout : Layout {
 
     @SuppressLint("SimpleDateFormat")
-    override fun layoutData(context: Context, item: DataItem): RemoteViews {
+    override fun layoutData(context: Context, item: DataItem, clickIntent: Intent): RemoteViews {
 
         val remoteViews = RemoteViews(context.packageName, R.layout.widget_transaction_item_recost)
 
@@ -52,6 +53,7 @@ class RecostLayout : Layout {
             }))
 
             setViewVisibility(R.id.recost, if (item.recost) View.VISIBLE else View.GONE)
+            setOnClickFillInIntent(R.id.root, clickIntent)
         }
 
         return remoteViews

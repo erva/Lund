@@ -1,6 +1,7 @@
 package io.erva.lund.widget
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -11,24 +12,25 @@ import android.os.Handler
 import android.provider.Telephony
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import android.widget.Toast
 import io.erva.lund.R
 import io.erva.lund.data.DataProvider
 import io.erva.lund.data.DataProviderFactory
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.storage.PrefStorage
 
+const val ACTION_ON_CLICK = "io.erva.lund.widget.ACTION_ON_CLICK"
+const val EXTRA_DATA_ITEM = "EXTRA_DATA_ITEM"
+
 class BalanceWidgetProvider : AppWidgetProvider() {
 
     private val updateHandler = Handler()
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
-            updateHandler.postDelayed({
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(ComponentName(context, BalanceWidgetProvider::class.java)))
-            }, 1000)
-        } else {
-            super.onReceive(context, intent)
+        when {
+            intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> onNewSms(context)
+            intent.action == ACTION_ON_CLICK -> onClick(context, intent.getParcelableExtra(EXTRA_DATA_ITEM))
+            else -> super.onReceive(context, intent)
         }
     }
 
@@ -38,6 +40,13 @@ class BalanceWidgetProvider : AppWidgetProvider() {
             val adapterIntent = Intent(context, TransactionsAdapterService::class.java)
             adapterIntent.data = Uri.fromParts("content", it.toString(), null)
             remoteView.setRemoteAdapter(R.id.widget_transactions_list, adapterIntent)
+
+            val listClickIntent = Intent(context, BalanceWidgetProvider::class.java)
+            listClickIntent.action = ACTION_ON_CLICK
+            val listClickPIntent = PendingIntent.getBroadcast(context, 0,
+                    listClickIntent, 0)
+            remoteView.setPendingIntentTemplate(R.id.widget_transactions_list, listClickPIntent)
+
             appWidgetManager.updateAppWidget(it, remoteView)
             appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.widget_transactions_list);
         }
@@ -50,6 +59,29 @@ class BalanceWidgetProvider : AppWidgetProvider() {
             }
         }
     }
+
+    private fun onNewSms(context: Context) {
+        updateHandler.postDelayed({
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(
+                    ComponentName(context, BalanceWidgetProvider::class.java)))
+        }, 1000)
+    }
+
+    private fun onClick(context: Context, dataItem: DataItem?) {
+        dataItem?.let {
+            if (dataItem.location != null)
+                Toast.makeText(context, dataItem.location, Toast.LENGTH_SHORT).show()
+            else openSmsApp(context, dataItem)
+        }
+    }
+
+    private fun openSmsApp(context: Context, dataItem: DataItem) {
+        val smsAppIntent = Intent(Intent.ACTION_VIEW,
+                Uri.fromParts("sms", dataItem.address, null))
+        smsAppIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(smsAppIntent)
+    }
 }
 
 class TransactionsAdapterService : RemoteViewsService() {
@@ -59,7 +91,8 @@ class TransactionsAdapterService : RemoteViewsService() {
     }
 }
 
-class TransactionsListFactory(private val context: Context, private val intent: Intent) : RemoteViewsService.RemoteViewsFactory {
+class TransactionsListFactory(private val context: Context, private val intent: Intent)
+    : RemoteViewsService.RemoteViewsFactory {
 
     private val items: MutableList<DataItem> = mutableListOf()
     private lateinit var dataProvider: DataProvider
@@ -82,5 +115,8 @@ class TransactionsListFactory(private val context: Context, private val intent: 
     }
 
     @SuppressLint("SimpleDateFormat")
-    override fun getViewAt(position: Int): RemoteViews = dataProvider.getLayout().layoutData(context, items[position])
+    override fun getViewAt(position: Int): RemoteViews = dataProvider.getLayout()
+            .layoutData(context, items[position],
+                    Intent().apply { putExtra(EXTRA_DATA_ITEM, items[position]) }
+            )
 }
