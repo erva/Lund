@@ -1,8 +1,8 @@
 package io.erva.lund.screen
 
 import android.view.View
-import io.erva.celladapter.Cell
 import io.erva.celladapter.Layout
+import io.erva.celladapter.x.Cell
 import io.erva.lund.R
 import kotlinx.android.synthetic.main.item_bank.view.*
 

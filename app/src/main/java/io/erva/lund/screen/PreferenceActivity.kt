@@ -6,20 +6,20 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import io.erva.celladapter.Cell
-import io.erva.celladapter.CellAdapter
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.erva.celladapter.x.Cell
+import io.erva.celladapter.x.CellAdapter
 import io.erva.lund.R
 import io.erva.lund.data.Data
 import io.erva.lund.storage.PrefStorage
 import kotlinx.android.synthetic.main.activity_preference.*
 
-class PreferenceActivity : AppCompatActivity() {
+private const val REQUEST_SMS_PERMISSION = 2
 
-    private val REQUEST_SMS_PERMISSION = 2
+class PreferenceActivity : AppCompatActivity() {
 
     private var adapter: CellAdapter = CellAdapter().let {
         it.cell(BankItemCell::class) {
