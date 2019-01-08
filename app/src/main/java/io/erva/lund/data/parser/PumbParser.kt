@@ -8,10 +8,16 @@ class PumbParser : PlainSmsParser {
 
     override fun parse(plainSms: PlainSms): Transaction? {
         val transaction = Transaction(plainSms)
+        val cardNumberPattern = Pattern.compile("(?>\\*)\\d{4}|(?=\\d{10}(\\d{4}))")
         val infoDatePattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")
         val balancePattern = Pattern.compile("(?<=BALANCE )([-]?\\d+.\\d+]?)(?=UAH)")
 
-        transaction.parsedCardNumber = plainSms.body.substring(0, 5)
+        val cardNumberMatcher = cardNumberPattern.matcher(plainSms.body)
+        if (cardNumberMatcher.find()) {
+            val number = cardNumberMatcher.group(0)
+            transaction.parsedCardNumber = if (!number.isBlank()) number else cardNumberMatcher.group(1)
+        }
+
         transaction.parsedLocation = plainSms.body.substringAfterLast("UAH ")
 
         val infoDateMatcher = infoDatePattern.matcher(plainSms.body)
