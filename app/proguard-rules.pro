@@ -1,5 +1,12 @@
+-keepattributes Signature
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+-optimizationpasses 5
+-allowaccessmodification
+-dontskipnonpubliclibraryclasses
+-repackageclasses ''
 
 -printmapping mapping.txt
 
