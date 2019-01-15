@@ -17,6 +17,17 @@ import java.text.SimpleDateFormat
  *
  * SURNAME  NAME  *4906 2018-12-18 12:19 SPYSANNIA 117600.00UAH (BALANCE 41045.01UAH) VLASNI KOSHTY 41045.01UAH FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u
  */
+
+/**
+New writeoff format (15.01.2019)
+161.70 SEK (513.08 UAH, kurs 3.17) Pokupka (Hold)
+2019-01-15 15:55
+Kartka: *9876
+Komisiia: 0.00 UAH
+Dostupno: 6621.32 UAH
+Vlasni koshty: 6621.32 UAH
+COOP MARTE
+ */
 class PumbParserTest {
 
     private val writeoff = "*1234 " +
@@ -52,6 +63,15 @@ class PumbParserTest {
             "VLASNI KOSHTY 415.01UAH " +
             "FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u"
 
+    private val newWriteoff = "" +
+            "161.70 SEK (513.08 UAH, kurs 3.17) Pokupka (Hold)\n" +
+            "2019-01-15 15:55\n" +
+            "Kartka: *9876\n" +
+            "Komisiia: 0.00 UAH\n" +
+            "Dostupno: 6621.32 UAH\n" +
+            "Vlasni koshty: 6621.32 UAH\n" +
+            "COOP MARTE"
+
     private lateinit var pumbParser: PumbParser
 
     @Before
@@ -69,6 +89,19 @@ class PumbParserTest {
             Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-07-07 12:10"))
             Assert.assertEquals(it.parsedBalance, -552.60)
             Assert.assertEquals(it.parsedLocation, "DFS San Francisco Int. San Fra")
+        }
+    }
+
+    @Test
+    fun testNewWriteOff() {
+        val plainSms = PlainSms(0, "", 0, 0, newWriteoff)
+        val transaction = pumbParser.parse(plainSms)
+        Assert.assertNotNull(transaction)
+        transaction?.let {
+            Assert.assertEquals(it.parsedCardNumber, "*9876")
+            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2019-01-15 15:55"))
+            Assert.assertEquals(it.parsedBalance, 6621.32)
+            Assert.assertEquals(it.parsedLocation, "COOP MARTE")
         }
     }
 
