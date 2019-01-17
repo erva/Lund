@@ -2,14 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+def majorVersion = 1.3
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "io.erva.lund"
-        minSdkVersion 20 // starting 21 - there are multiple classes.dex
+        minSdkVersion 20
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionName "${majorVersion}"
+        versionCode getCommitCount()
     }
     buildTypes {
         debug {
@@ -27,6 +29,11 @@ android {
     androidExtensions {
         experimental = true
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = new File("./", "lund_${baseName}-${majorVersion}.${getCommitCount()}.apk")
+        }
+    }
 }
 
 dependencies {
@@ -39,4 +46,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'androidx.recyclerview', module: 'recyclerview'
     }
+}
+
+static def getCommitCount() {
+    return "git rev-list HEAD --count".execute().text.trim().toInteger()
 }
