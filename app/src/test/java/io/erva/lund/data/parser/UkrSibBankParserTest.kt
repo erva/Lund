@@ -1,6 +1,7 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.sms.UkrSibSmsBankParser
+import io.erva.lund.data.provider.sms.PlainSms
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -48,11 +49,11 @@ class UkrSibBankParserTest {
             "Dostupniy zalyshok 6042.13UAH. " +
             "ONLINE.UKRSIBBANK.COM"
 
-    private lateinit var ukrSibBankParser: UkrSibBankParser
+    private lateinit var ukrSibBankParser: UkrSibSmsBankParser
 
     @Before
     fun setUp() {
-        ukrSibBankParser = UkrSibBankParser()
+        ukrSibBankParser = UkrSibSmsBankParser()
     }
 
     @Test

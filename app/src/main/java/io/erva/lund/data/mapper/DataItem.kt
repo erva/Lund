@@ -6,11 +6,11 @@ import java.util.*
 
 @Parcelize
 data class DataItem(
-        val address: String,
+        val address: String?,
         val card: String,
         val dateSent: Date,
         val difference: Double,
         val balance: Double,
         val parsedDate: Date,
         val recost: Boolean,
-        val location: String?) : Parcelable
+        val details: String?) : Parcelable

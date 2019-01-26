@@ -1,16 +1,23 @@
-package io.erva.lund.data.parser
+package io.erva.lund.data.parser.sms
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.Parser
+import io.erva.lund.data.parser.Transaction
+import io.erva.lund.data.provider.sms.PlainSms
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
-class PumbParser : PlainSmsParser {
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+@Deprecated(
+        "PUMB changed sms format",
+        ReplaceWith("PumbSmsParser", "io.erva.lund.data.parser.sms.PumbSmsParser"),
+        DeprecationLevel.WARNING)
+class PumbOldFormatSmsParser : Parser<PlainSms> {
 
     override fun parse(plainSms: PlainSms): Transaction? {
-        val transaction = Transaction(plainSms)
+        val transaction = Transaction(plainSms.dateSent, plainSms.address)
         val cardNumberPattern = Pattern.compile("(?>\\*)\\d{4}|(?=\\d{10}(\\d{4}))")
         val infoDatePattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")
-        val balancePattern = Pattern.compile("(?<=BALANCE | koshty: )([-]?\\d+.\\d+]?)(?=( ?)UAH)")
+        val balancePattern = Pattern.compile("(?<=BALANCE )([-]?\\d+.\\d+]?)(?=UAH)")
 
         val cardNumberMatcher = cardNumberPattern.matcher(plainSms.body)
         if (cardNumberMatcher.find()) {
@@ -18,7 +25,7 @@ class PumbParser : PlainSmsParser {
             transaction.parsedCardNumber = if (!number.isBlank()) number else cardNumberMatcher.group(1)
         }
 
-        transaction.parsedLocation = plainSms.body.substringAfterLast("UAH").trim()
+        transaction.parsedDetails = plainSms.body.substringAfterLast("UAH ")
 
         val infoDateMatcher = infoDatePattern.matcher(plainSms.body)
         if (infoDateMatcher.find()) {
@@ -33,8 +40,7 @@ class PumbParser : PlainSmsParser {
 
         val isAllSet = !transaction.parsedCardNumber.isNullOrEmpty() &&
                 transaction.parsedInfoDate != null &&
-                transaction.parsedBalance != null &&
-                !transaction.parsedLocation.isNullOrEmpty()
+                transaction.parsedBalance != null
 
         return if (isAllSet) transaction else null
     }

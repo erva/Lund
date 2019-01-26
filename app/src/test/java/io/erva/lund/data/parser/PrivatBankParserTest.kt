@@ -1,6 +1,7 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.sms.PrivatBankSmsParser
+import io.erva.lund.data.provider.sms.PlainSms
 import org.junit.Assert
 import org.junit.Test
 
@@ -22,11 +23,11 @@ class PrivatBankParserTest {
             "Bal. 250.47UAH " +
             "Kurs 26.3156 UAH/USD"
 
-    private lateinit var privatBankParser: PrivatBankParser
+    private lateinit var privatBankParser: PrivatBankSmsParser
 
     @Before
     fun setUp() {
-        privatBankParser = PrivatBankParser()
+        privatBankParser = PrivatBankSmsParser()
     }
 
     @Test

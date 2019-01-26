@@ -2,15 +2,15 @@ package io.erva.lund.storage
 
 import android.content.Context
 import io.erva.lund.R
-import io.erva.lund.data.Data
+import io.erva.lund.data.provider.BankSource
 
 class PrefStorage {
 
-    fun saveWidgetBank(context: Context, widgetId: Int, data: Data) =
-            getSharedPrefs(context).edit().putString(widgetId.toString(), data.name).apply()
+    fun saveWidgetBank(context: Context, widgetId: Int, bank: BankSource) =
+            getSharedPrefs(context).edit().putString(widgetId.toString(), bank.name).apply()
 
-    fun getWidgetBank(context: Context, widgetId: Int): Data =
-            Data.valueOf(getSharedPrefs(context).getString(widgetId.toString(), Data.UNDEFINED.name))
+    fun getWidgetBank(context: Context, widgetId: Int): BankSource =
+            BankSource.valueOf(getSharedPrefs(context).getString(widgetId.toString(), BankSource.UNDEFINED.name))
 
     fun removeWidgetBank(context: Context, widgetId: Int) =
             getSharedPrefs(context).edit().remove(widgetId.toString()).apply()

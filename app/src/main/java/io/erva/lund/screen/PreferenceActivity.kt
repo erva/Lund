@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.erva.celladapter.x.Cell
 import io.erva.celladapter.x.CellAdapter
 import io.erva.lund.R
-import io.erva.lund.data.Data
+import io.erva.lund.data.provider.BankSource
 import io.erva.lund.storage.PrefStorage
-import kotlinx.android.synthetic.main.activity_preference.*
+import kotlinx.android.synthetic.main.activity_preference.bank_list
 
 private const val REQUEST_SMS_PERMISSION = 2
 
@@ -26,7 +26,7 @@ class PreferenceActivity : AppCompatActivity() {
             item(BankItemModel::class)
             listener(object : Cell.Listener<BankItemModel> {
                 override fun onCellClicked(item: BankItemModel) {
-                    onProviderSelected(item.data)
+                    onProviderSelected(item.bankSource)
                 }
             })
         }
@@ -73,19 +73,19 @@ class PreferenceActivity : AppCompatActivity() {
         bank_list.layoutManager = LinearLayoutManager(this)
         bank_list.adapter = adapter
         adapter.items.addAll(arrayOf(
-                BankItemModel("PUMB", R.drawable.ic_bannk_pumb, Data.PUMB),
-                BankItemModel("Privat bank", R.drawable.ic_bank_privat, Data.PRIVATBANK),
-                BankItemModel("UkrSib bank", R.drawable.ic_bank_ukrsib, Data.UKRSIBBANK),
-                BankItemModel("Raiffeisen Bank Aval", R.drawable.ic_bank_aval, Data.AVALBANK)
+                BankItemModel(R.drawable.ic_bannk_pumb, "PUMB", BankSource.PUMB_SMS),
+                BankItemModel(R.drawable.ic_bank_privat, "Privat bank", BankSource.PRIVATBANK_SMS),
+                BankItemModel(R.drawable.ic_bank_ukrsib, "UkrSib bank", BankSource.UKRSIBBANK_SMS),
+                BankItemModel(R.drawable.ic_bank_aval, "Raiffeisen Bank Aval", BankSource.AVALBANK_SMS)
         ))
         adapter.notifyDataSetChanged()
     }
 
-    private fun onProviderSelected(data: Data) {
+    private fun onProviderSelected(bank: BankSource) {
         val intent = intent
         intent.extras?.apply {
             val appWidgetId = getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-            PrefStorage().saveWidgetBank(applicationContext, appWidgetId, data)
+            PrefStorage().saveWidgetBank(applicationContext, appWidgetId, bank)
             val resultValue = Intent()
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             setResult(Activity.RESULT_OK, resultValue)

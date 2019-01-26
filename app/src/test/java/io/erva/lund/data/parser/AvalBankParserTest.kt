@@ -1,6 +1,7 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.sms.AvalBankSmsParser
+import io.erva.lund.data.provider.sms.PlainSms
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -39,11 +40,11 @@ class AvalBankParserTest {
             "na Vash rakhunok kartkovyi 1234567890(UAH) " +
             "bulo zarakhovano sumu 728.77 UAH"
 
-    private lateinit var avalParser: AvalBankParser
+    private lateinit var avalParser: AvalBankSmsParser
 
     @Before
     fun setUp() {
-        avalParser = AvalBankParser()
+        avalParser = AvalBankSmsParser()
     }
 
     @Test

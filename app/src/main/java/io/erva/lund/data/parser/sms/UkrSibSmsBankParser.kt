@@ -1,14 +1,17 @@
-package io.erva.lund.data.parser
+package io.erva.lund.data.parser.sms
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.Parser
+import io.erva.lund.data.parser.Transaction
+import io.erva.lund.data.provider.sms.PlainSms
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
-class UkrSibBankParser : PlainSmsParser {
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+class UkrSibSmsBankParser : Parser<PlainSms> {
 
     override fun parse(plainSms: PlainSms): Transaction? {
 
-        val transaction = Transaction(plainSms)
+        val transaction = Transaction(plainSms.dateSent, plainSms.address)
         val infoDatePattern = Pattern.compile("(\\d{2}).(\\d{2}).(\\d{4}) (\\d{2}):(\\d{2})")
         val balancePattern = Pattern.compile("(?<=Dostupno |zalyshok )([-]?\\d+.\\d+]?)(?=UAH)")
         val cardNumberPattern = Pattern.compile("(?<=\\*)\\d{4}|(?=\\d{10}(\\d{4}))")

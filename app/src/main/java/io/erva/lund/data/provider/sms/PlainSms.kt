@@ -1,4 +1,4 @@
-package io.erva.lund.data.sms
+package io.erva.lund.data.provider.sms
 
 data class PlainSms(
         val threadId: Long,

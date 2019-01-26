@@ -28,18 +28,18 @@ class RecostMapper : DataMapper {
             val current = transaction.parsedBalance!!
             val difference = current - previous
 
-            val dateSent = Date(transaction.plainSms.dateSent)
+            val dateSent = Date(transaction.eventTimestamp)
             val parsedDate = transaction.parsedInfoDate!!
 
             dataItems.add(DataItem(
-                    address = transaction.plainSms.address,
+                    address = transaction.smsAddress,
                     card = transaction.parsedCardNumber!!,
                     dateSent = dateSent,
                     difference = difference,
                     balance = current,
                     parsedDate = parsedDate,
                     recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY,
-                    location = transaction.parsedLocation
+                    details = transaction.parsedDetails
             ))
         }
         return dataItems

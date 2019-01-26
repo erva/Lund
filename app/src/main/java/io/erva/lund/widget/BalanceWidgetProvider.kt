@@ -14,9 +14,9 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import android.widget.Toast
 import io.erva.lund.R
-import io.erva.lund.data.DataProvider
-import io.erva.lund.data.DataProviderFactory
 import io.erva.lund.data.mapper.DataItem
+import io.erva.lund.data.provider.DataProvider
+import io.erva.lund.data.provider.DataProviderFactory
 import io.erva.lund.storage.PrefStorage
 
 const val ACTION_ON_CLICK = "io.erva.lund.widget.ACTION_ON_CLICK"
@@ -48,14 +48,14 @@ class BalanceWidgetProvider : AppWidgetProvider() {
             remoteView.setPendingIntentTemplate(R.id.widget_transactions_list, listClickPIntent)
 
             appWidgetManager.updateAppWidget(it, remoteView)
-            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.widget_transactions_list);
+            appWidgetManager.notifyAppWidgetViewDataChanged(it, R.id.widget_transactions_list)
         }
     }
 
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
         context?.let {
-            appWidgetIds?.forEach {
-                PrefStorage().removeWidgetBank(context, it)
+            appWidgetIds?.forEach { widgetId ->
+                PrefStorage().removeWidgetBank(context, widgetId)
             }
         }
     }
@@ -70,8 +70,7 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 
     private fun onClick(context: Context, dataItem: DataItem?) {
         dataItem?.let {
-            if (dataItem.location != null)
-                Toast.makeText(context, dataItem.location, Toast.LENGTH_SHORT).show()
+            if (!dataItem.details.isNullOrEmpty()) Toast.makeText(context, dataItem.details, Toast.LENGTH_SHORT).show()
             else openSmsApp(context, dataItem)
         }
     }

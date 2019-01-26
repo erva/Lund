@@ -1,128 +1,69 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.sms.PlainSms
+import io.erva.lund.data.parser.sms.PumbSmsParser
+import io.erva.lund.data.provider.sms.PlainSms
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.text.SimpleDateFormat
 
-/**
- *1234 2018-07-07 12:10 SPYSANNIA 15.23USD (402.07UAH ZA KURSOM 26.40) KOMISIIA 0.00UAH BALANCE -552.60UAH VLASNI KOSHTY 0.00UAH DFS San Francisco Int. San Fra
- *
- *1234 2018-07-08 20:35 ZABLOKOVANO 274.34SEK (838.73UAH ZA KURSOM 3.06) KOMISIIA 0.00UAH BALANCE 5104.88UAH VLASNI KOSHTY 5104.88UAH ICA KVANTUM MALMBORGS LUND
- *
- *1234 2018-03-10 11:24 (155.00UAH) VIDMOVA:Perevyshchenyi limit po summi operatsii Portmone KIEV UA Detali 0442907290
- *
- *1234 2018-03-05 16:12 NADHODZHENNIA 458.65UAH BALANCE 658.74UAH VLASNI KOSHTY 658.74UAH Detali pumb.ua/ib
- *
- * SURNAME  NAME  *4906 2018-12-18 12:19 SPYSANNIA 117600.00UAH (BALANCE 41045.01UAH) VLASNI KOSHTY 41045.01UAH FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u
- */
-
-/**
-New writeoff format (15.01.2019)
-161.70 SEK (513.08 UAH, kurs 3.17) Pokupka (Hold)
-2019-01-15 15:55
-Kartka: *9876
-Komisiia: 0.00 UAH
-Dostupno: 6621.32 UAH
-Vlasni koshty: 6621.32 UAH
-COOP MARTE
- */
 class PumbParserTest {
 
-    private val writeoff = "*1234 " +
-            "2018-07-07 12:10 " +
-            "SPYSANNIA 15.23USD (402.07UAH ZA KURSOM 26.40) KOMISIIA 0.00UAH " +
-            "BALANCE -552.60UAH " +
-            "VLASNI KOSHTY 0.00UAH " +
-            "DFS San Francisco Int. San Fra"
+    private val writeOffDetails =
+            "5000.00UAH Zablokovano\n" +
+            "MONODirect KYIV UA\n" +
+            "2019-01-19 12:53\n" +
+            "Kartka: *1234 \n" +
+            "Dostupno: 6534.66UAH\n" +
+            "Vlasni koshty: 6534.66UAH"
 
-    private val block = "*1234 " +
-            "2018-07-08 20:35 " +
-            "ZABLOKOVANO 274.34SEK (838.73UAH ZA KURSOM 3.06) KOMISIIA 0.00UAH " +
-            "BALANCE 5104.88UAH " +
-            "VLASNI KOSHTY 5104.88UAH " +
-            "ICA KVANTUM MALMBORGS LUND"
+    private val writeOffLocation =
+            "190.00DKK (816.02UAH, kurs 4.29)\n" +
+            "Zablokovano *1234\n" +
+            "2019-01-20 13:33\n" +
+            "Komisiia 0.00UAH\n" +
+            "Dostupno 5199.35UAH\n" +
+            "Vlasni koshty 5199.35UAH\n" +
+            "Kronborg Koebenhavn k DK"
 
-    private val decline = "*1234 " +
-            "2018-03-10 11:24 " +
-            "(155.00UAH) " +
-            "VIDMOVA:Perevyshchenyi limit po summi operatsii " +
-            "Portmone KIEV UA Detali 0442907290"
+    private val income =
+            "4276.47UAH Nadhodzhennia \n" +
+            "2019-01-23 16:06\n" +
+            "Rakhunok: *9650 \n" +
+            "Dostupno: 5475.82UAH \n" +
+            "Vlasni koshty: 5475.82UAH"
 
-    private val income = "*1234 " +
-            "2018-03-05 16:12 " +
-            "NADHODZHENNIA 458.65UAH " +
-            "BALANCE 658.74UAH " +
-            "VLASNI KOSHTY 658.74UAH " +
-            "Detali pumb.ua/ib"
-
-    private val writeoffOtherPerson = "SURNAME  NAME  *4906 " +
-            "2018-12-18 12:19 " +
-            "SPYSANNIA 1100.00UAH (BALANCE 415.01UAH) " +
-            "VLASNI KOSHTY 415.01UAH " +
-            "FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u"
-
-    private val newWriteoff = "" +
-            "161.70 SEK (513.08 UAH, kurs 3.17) Pokupka (Hold)\n" +
-            "2019-01-15 15:55\n" +
-            "Kartka: *9876\n" +
-            "Komisiia: 0.00 UAH\n" +
-            "Dostupno: 6621.32 UAH\n" +
-            "Vlasni koshty: 6621.32 UAH\n" +
-            "COOP MARTE"
-
-    private lateinit var pumbParser: PumbParser
+    private lateinit var pumbParser: PumbSmsParser
 
     @Before
     fun setUp() {
-        pumbParser = PumbParser()
+        pumbParser = PumbSmsParser()
     }
 
     @Test
-    fun testWriteOff() {
-        val plainSms = PlainSms(0, "", 0, 0, writeoff)
+    fun testWriteOffDetails() {
+        val plainSms = PlainSms(0, "", 0, 0, writeOffDetails)
         val transaction = pumbParser.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-07-07 12:10"))
-            Assert.assertEquals(it.parsedBalance, -552.60)
-            Assert.assertEquals(it.parsedLocation, "DFS San Francisco Int. San Fra")
+            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2019-01-19 12:53"))
+            Assert.assertEquals(it.parsedBalance, 6534.66)
+            Assert.assertEquals(it.parsedDetails, "MONODirect KYIV UA")
         }
     }
 
     @Test
-    fun testNewWriteOff() {
-        val plainSms = PlainSms(0, "", 0, 0, newWriteoff)
-        val transaction = pumbParser.parse(plainSms)
-        Assert.assertNotNull(transaction)
-        transaction?.let {
-            Assert.assertEquals(it.parsedCardNumber, "*9876")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2019-01-15 15:55"))
-            Assert.assertEquals(it.parsedBalance, 6621.32)
-            Assert.assertEquals(it.parsedLocation, "COOP MARTE")
-        }
-    }
-
-    @Test
-    fun testBlock() {
-        val plainSms = PlainSms(0, "", 0, 0, block)
+    fun testWriteOffLocation() {
+        val plainSms = PlainSms(0, "", 0, 0, writeOffLocation)
         val transaction = pumbParser.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-07-08 20:35"))
-            Assert.assertEquals(it.parsedBalance, 5104.88)
-            Assert.assertEquals(it.parsedLocation, "ICA KVANTUM MALMBORGS LUND")
+            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2019-01-20 13:33"))
+            Assert.assertEquals(it.parsedBalance, 5199.35)
+            Assert.assertEquals(it.parsedDetails, "Kronborg Koebenhavn k DK")
         }
-    }
-
-    @Test
-    fun testDecline() {
-        val plainSms = PlainSms(0, "", 0, 0, decline)
-        val transaction = pumbParser.parse(plainSms)
-        Assert.assertNull(transaction)
     }
 
     @Test
@@ -131,23 +72,10 @@ class PumbParserTest {
         val transaction = pumbParser.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
-            Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-03-05 16:12"))
-            Assert.assertEquals(it.parsedBalance, 658.74)
-            Assert.assertEquals(it.parsedLocation, "Detali pumb.ua/ib")
-        }
-    }
-
-    @Test
-    fun testWriteOffOtherPerson() {
-        val plainSms = PlainSms(0, "", 0, 0, writeoffOtherPerson)
-        val transaction = pumbParser.parse(plainSms)
-        Assert.assertNotNull(transaction)
-        transaction?.let {
-            Assert.assertEquals(it.parsedCardNumber, "*4906")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-12-18 12:19"))
-            Assert.assertEquals(it.parsedBalance, 415.01)
-            Assert.assertEquals(it.parsedLocation, "FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u")
+            Assert.assertEquals(it.parsedCardNumber, "*9650")
+            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2019-01-23 16:06"))
+            Assert.assertEquals(it.parsedBalance, 5475.82)
+            Assert.assertEquals(it.parsedDetails, "")
         }
     }
 }
