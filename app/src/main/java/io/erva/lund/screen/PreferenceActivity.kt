@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.erva.celladapter.x.Cell
 import io.erva.celladapter.x.CellAdapter
 import io.erva.lund.R
-import io.erva.lund.data.provider.BankSource
+import io.erva.lund.data.provider.Bank
+import io.erva.lund.data.provider.SOURCE
 import io.erva.lund.storage.PrefStorage
 import kotlinx.android.synthetic.main.activity_preference.bank_list
 
@@ -26,7 +27,7 @@ class PreferenceActivity : AppCompatActivity() {
             item(BankItemModel::class)
             listener(object : Cell.Listener<BankItemModel> {
                 override fun onCellClicked(item: BankItemModel) {
-                    onProviderSelected(item.bankSource)
+                    onProviderSelected(item.bank)
                 }
             })
         }
@@ -73,15 +74,16 @@ class PreferenceActivity : AppCompatActivity() {
         bank_list.layoutManager = LinearLayoutManager(this)
         bank_list.adapter = adapter
         adapter.items.addAll(arrayOf(
-                BankItemModel(R.drawable.ic_bannk_pumb, "PUMB", BankSource.PUMB_SMS),
-                BankItemModel(R.drawable.ic_bank_privat, "Privat bank", BankSource.PRIVATBANK_SMS),
-                BankItemModel(R.drawable.ic_bank_ukrsib, "UkrSib bank", BankSource.UKRSIBBANK_SMS),
-                BankItemModel(R.drawable.ic_bank_aval, "Raiffeisen Bank Aval", BankSource.AVALBANK_SMS)
+                BankItemModel(R.drawable.ic_bannk_pumb, "PUMB", Bank.PUMB, SOURCE.SMS),
+                BankItemModel(R.drawable.ic_bank_privat, "Privat bank", Bank.PRIVATBANK, SOURCE.SMS),
+                BankItemModel(R.drawable.ic_bank_ukrsib, "UkrSib bank", Bank.UKRSIBBANK, SOURCE.SMS),
+                BankItemModel(R.drawable.ic_bank_aval, "Raiffeisen Bank Aval", Bank.AVALBANK, SOURCE.SMS),
+                BankItemModel(R.drawable.ic_bank_mono, "Monobank", Bank.MONOBANK, SOURCE.NOTIFICATION)
         ))
         adapter.notifyDataSetChanged()
     }
 
-    private fun onProviderSelected(bank: BankSource) {
+    private fun onProviderSelected(bank: Bank) {
         val intent = intent
         intent.extras?.apply {
             val appWidgetId = getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)

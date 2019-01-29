@@ -9,7 +9,6 @@ import io.erva.lund.data.provider.sms.PlainSms
 import io.erva.lund.widget.layout.Layout
 
 class NotificationProvider(
-        private val context: Context,
         private val address: String,
         private val parser: Parser<PlainSms>,
         private val mapper: DataMapper,
@@ -17,7 +16,7 @@ class NotificationProvider(
 
     override fun getLayout() = layout
 
-    override fun provide(): List<DataItem> {
+    override fun provide(context: Context): List<DataItem> {
         return emptyList()
     }
 }

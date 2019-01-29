@@ -10,7 +10,6 @@ import io.erva.lund.data.provider.DataProvider
 import io.erva.lund.widget.layout.Layout
 
 class SmsProvider(
-        private val context: Context,
         private val address: String,
         private val parser: Parser<PlainSms>,
         private val mapper: DataMapper,
@@ -18,7 +17,7 @@ class SmsProvider(
 
     override fun getLayout() = layout
 
-    override fun provide(): List<DataItem> {
+    override fun provide(context: Context): List<DataItem> {
         return mapper.map(
                 providePlainSms(context, address)
                         .mapNotNull { parser.parse(it) }

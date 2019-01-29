@@ -8,6 +8,6 @@ data class PlainSms(
         val body: String) {
 
     override fun toString(): String {
-        return "\nBankSms(address='$address', body='$body', dateSent='$dateSent')"
+        return "\nPlainSms(address='$address', body='$body', dateSent='$dateSent')"
     }
 }

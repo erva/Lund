@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -17,7 +18,8 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        tools:targetApi="lollipop">
 
         <ImageView
             android:id="@+id/bank_icon"
@@ -33,5 +35,14 @@
             android:textSize="20sp"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/bank_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="8dp"
+        android:textColor="@android:color/secondary_text_dark"
+        android:textSize="14sp"/>
 
 </androidx.cardview.widget.CardView>

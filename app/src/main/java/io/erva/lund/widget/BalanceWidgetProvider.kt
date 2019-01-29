@@ -108,9 +108,9 @@ class TransactionsListFactory(private val context: Context, private val intent: 
     private fun fetchData() {
         items.clear()
         val appWidgetId = Integer.valueOf(intent.data.schemeSpecificPart)
-        val data = PrefStorage().getWidgetBank(context, appWidgetId)
-        dataProvider = DataProviderFactory.getDataProvider(context, data)
-        items.addAll(dataProvider.provide())
+        val bank = PrefStorage().getWidgetBank(context, appWidgetId)
+        dataProvider = DataProviderFactory.getDataProvider(bank)
+        items.addAll(dataProvider.provide(context))
     }
 
     @SuppressLint("SimpleDateFormat")
