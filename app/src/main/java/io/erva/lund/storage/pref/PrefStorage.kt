@@ -1,4 +1,4 @@
-package io.erva.lund.storage
+package io.erva.lund.storage.pref
 
 import android.content.Context
 import io.erva.lund.R

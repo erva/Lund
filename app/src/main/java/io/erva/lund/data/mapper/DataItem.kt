@@ -8,9 +8,9 @@ import java.util.*
 data class DataItem(
         val address: String?,
         val card: String,
-        val dateSent: Date,
+        val dateSent: Date?,
         val difference: Double,
         val balance: Double,
-        val parsedDate: Date,
+        val parsedDate: Date?,
         val recost: Boolean,
         val details: String?) : Parcelable

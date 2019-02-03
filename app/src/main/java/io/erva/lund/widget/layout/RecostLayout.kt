@@ -14,27 +14,27 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("SimpleDateFormat")
 class RecostLayout : Layout {
 
-    @SuppressLint("SimpleDateFormat")
     override fun layoutData(context: Context, item: DataItem, clickIntent: Intent): RemoteViews {
-
         val remoteViews = RemoteViews(context.packageName, R.layout.widget_transaction_item_recost)
-
-        val dateSent = formatDate("MM/dd", item.dateSent)
-        val timeSent = formatDate("HH:mm", item.dateSent)
-        val date = if (timeSent != null) "$dateSent $timeSent" else "$dateSent"
 
         remoteViews.apply {
             setTextViewText(R.id.card, item.card)
-            setTextViewText(R.id.date, date)
+
+            item.dateSent?.let {
+                val dateSent = formatDate("MM/dd", item.dateSent)
+                val timeSent = formatDate("HH:mm", item.dateSent)
+                val date = if (timeSent != null) "$dateSent $timeSent" else "$dateSent"
+                setTextViewText(R.id.date, date)
+            }
 
             val balanceText = SpannableString("%.2f".format(item.balance))
             balanceText.setSpan(RelativeSizeSpan(0.75f),
                     balanceText.indexOf('.'),
                     balanceText.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
             setTextViewText(R.id.balance, balanceText)
 
             val isPlus = item.difference > 0

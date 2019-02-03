@@ -17,9 +17,10 @@ import io.erva.lund.R
 import io.erva.lund.data.mapper.DataItem
 import io.erva.lund.data.provider.DataProvider
 import io.erva.lund.data.provider.DataProviderFactory
-import io.erva.lund.storage.PrefStorage
+import io.erva.lund.storage.pref.PrefStorage
 
 const val ACTION_ON_CLICK = "io.erva.lund.widget.ACTION_ON_CLICK"
+const val ACTION_ON_NEW_NOTIFICATION = "io.erva.lund.widget.ACTION_ON_NEW_NOTIFICATION"
 const val EXTRA_DATA_ITEM = "EXTRA_DATA_ITEM"
 
 class BalanceWidgetProvider : AppWidgetProvider() {
@@ -28,7 +29,8 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when {
-            intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> onNewSms(context)
+            intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> onDataUpdated(context)
+            intent.action == ACTION_ON_NEW_NOTIFICATION -> onDataUpdated(context)
             intent.action == ACTION_ON_CLICK -> onClick(context, intent.getParcelableExtra(EXTRA_DATA_ITEM))
             else -> super.onReceive(context, intent)
         }
@@ -60,7 +62,7 @@ class BalanceWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun onNewSms(context: Context) {
+    private fun onDataUpdated(context: Context) {
         updateHandler.postDelayed({
             val appWidgetManager = AppWidgetManager.getInstance(context)
             onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(

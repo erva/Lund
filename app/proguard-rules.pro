@@ -21,3 +21,8 @@
 -keepclassmembers class * extends io.erva.celladapter.** {
     <init>(android.view.View);
 }
+
+#Room
+-dontwarn android.arch.util.paging.CountedDataSource
+-dontwarn android.arch.persistence.room.paging.LimitOffsetDataSource
+-keep class io.erva.lund.storage.room.NotificationEntity { *; }

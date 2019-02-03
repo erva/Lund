@@ -1,12 +1,16 @@
 package io.erva.lund.data.provider
 
+import io.erva.lund.data.mapper.PlainMapper
 import io.erva.lund.data.mapper.RecostMapper
+import io.erva.lund.data.parser.notification.MonobankNotificationParser
 import io.erva.lund.data.parser.sms.AvalBankSmsParser
 import io.erva.lund.data.parser.sms.PrivatBankSmsParser
 import io.erva.lund.data.parser.sms.PumbSmsParser
 import io.erva.lund.data.parser.sms.UkrSibSmsBankParser
+import io.erva.lund.data.provider.notification.MONOBANK_PACKAGE
 import io.erva.lund.data.provider.notification.NotificationProvider
 import io.erva.lund.data.provider.sms.SmsProvider
+import io.erva.lund.widget.layout.PlainLayout
 import io.erva.lund.widget.layout.RecostLayout
 
 enum class Bank {
@@ -39,8 +43,8 @@ class DataProviderFactory {
                     SmsProvider("10901" /*"Raiffeisen"*/,
                                 AvalBankSmsParser(), RecostMapper(), RecostLayout())
                 Bank.MONOBANK ->
-                    NotificationProvider("10901" /*"Raiffeisen"*/,
-                                         AvalBankSmsParser(), RecostMapper(), RecostLayout())
+                    NotificationProvider(MONOBANK_PACKAGE,
+                                         MonobankNotificationParser(), PlainMapper(), PlainLayout())
                 else -> throw IllegalArgumentException()
             }
         }
