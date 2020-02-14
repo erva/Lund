@@ -3,16 +3,21 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-def majorVersion = 1.4
+def majorVersion = 1.5
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "io.erva.lund"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionName "${majorVersion}"
         versionCode getCommitCount()
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
     }
     buildTypes {
         debug {
@@ -40,11 +45,11 @@ android {
 dependencies {
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.room:room-runtime:2.1.0-alpha04"
-    kapt "androidx.room:room-compiler:2.1.0-alpha04"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation "androidx.room:room-runtime:2.2.3"
+    kapt "androidx.room:room-compiler:2.2.3"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation ('com.github.erva.CellAdapter:celladapter-kotlin:3.0.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
         exclude group: 'androidx.recyclerview', module: 'recyclerview'

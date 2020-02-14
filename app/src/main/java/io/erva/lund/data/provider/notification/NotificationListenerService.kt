@@ -12,18 +12,6 @@ const val MONOBANK_PACKAGE = "com.ftband.mono"
 class MonobankNotificationListenerService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        /*if (sbn.packageName == MONOBANK_PACKAGE) {
-            val notificationEntity = NotificationEntity(
-                    packageName = sbn.packageName,
-                    postTime = sbn.postTime,
-                    text = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
-                    title = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String)
-
-            AppDatabase.getInstance(applicationContext).notificationDao().insert(notificationEntity)
-        }*/
-    }
-
-    override fun onNotificationRemoved(sbn: StatusBarNotification) {
         if (sbn.packageName == MONOBANK_PACKAGE) {
             val notificationEntity = NotificationEntity(
                     packageName = sbn.packageName,
@@ -32,12 +20,7 @@ class MonobankNotificationListenerService : NotificationListenerService() {
                     title = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String)
 
             AppDatabase.getInstance(applicationContext).notificationDao().insert(notificationEntity)
-            notifyWidget()
+            sendBroadcast(Intent(ACTION_ON_NEW_NOTIFICATION))
         }
-    }
-
-    private fun notifyWidget(){
-        val forceUpdateIntent = Intent(ACTION_ON_NEW_NOTIFICATION)
-        sendBroadcast(forceUpdateIntent)
     }
 }
