@@ -1,11 +1,11 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.parser.sms.PumbOldFormatSmsParser
+import io.erva.lund.data.parser.sms.PumbSmsParser_v1
 import io.erva.lund.data.provider.sms.PlainSms
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
-import java.text.SimpleDateFormat
 
 /**
  *1234 2018-07-07 12:10 SPYSANNIA 15.23USD (402.07UAH ZA KURSOM 26.40) KOMISIIA 0.00UAH BALANCE -552.60UAH VLASNI KOSHTY 0.00UAH DFS San Francisco Int. San Fra
@@ -18,7 +18,12 @@ import java.text.SimpleDateFormat
  *
  * SURNAME  NAME  *4906 2018-12-18 12:19 SPYSANNIA 117600.00UAH (BALANCE 41045.01UAH) VLASNI KOSHTY 41045.01UAH FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u
  */
-class PumbOldFormatParserTest {
+@Ignore("PUMB changed sms format")
+@Deprecated(
+    "PUMB changed sms format",
+    ReplaceWith("PumbParser_v3_Test", "io.erva.lund.data.parser.PumbParser_v3_Test"),
+    DeprecationLevel.WARNING)
+class PumbParser_v1_Test {
 
     private val writeoff = "*1234 " +
             "2018-07-07 12:10 " +
@@ -53,21 +58,21 @@ class PumbOldFormatParserTest {
             "VLASNI KOSHTY 415.01UAH " +
             "FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u"
 
-    private lateinit var pumbParser: PumbOldFormatSmsParser
+    private lateinit var pumbParserV1: PumbSmsParser_v1
 
     @Before
     fun setUp() {
-        pumbParser = PumbOldFormatSmsParser()
+        pumbParserV1 = PumbSmsParser_v1()
     }
 
     @Test
     fun testWriteOff() {
         val plainSms = PlainSms(0, "", 0, 0, writeoff)
-        val transaction = pumbParser.parse(plainSms)
+        val transaction = pumbParserV1.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-07-07 12:10"))
+            Assert.assertEquals(it.parsedInfoDate, pumbParserV1.dateFormat.parse("2018-07-07 12:10"))
             Assert.assertEquals(it.parsedBalance, -552.60)
             Assert.assertEquals(it.parsedDetails, "DFS San Francisco Int. San Fra")
         }
@@ -76,11 +81,11 @@ class PumbOldFormatParserTest {
     @Test
     fun testBlock() {
         val plainSms = PlainSms(0, "", 0, 0, block)
-        val transaction = pumbParser.parse(plainSms)
+        val transaction = pumbParserV1.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-07-08 20:35"))
+            Assert.assertEquals(it.parsedInfoDate, pumbParserV1.dateFormat.parse("2018-07-08 20:35"))
             Assert.assertEquals(it.parsedBalance, 5104.88)
             Assert.assertEquals(it.parsedDetails, "ICA KVANTUM MALMBORGS LUND")
         }
@@ -89,18 +94,18 @@ class PumbOldFormatParserTest {
     @Test
     fun testDecline() {
         val plainSms = PlainSms(0, "", 0, 0, decline)
-        val transaction = pumbParser.parse(plainSms)
+        val transaction = pumbParserV1.parse(plainSms)
         Assert.assertNull(transaction)
     }
 
     @Test
     fun testIncome() {
         val plainSms = PlainSms(0, "", 0, 0, income)
-        val transaction = pumbParser.parse(plainSms)
+        val transaction = pumbParserV1.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*1234")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-03-05 16:12"))
+            Assert.assertEquals(it.parsedInfoDate, pumbParserV1.dateFormat.parse("2018-03-05 16:12"))
             Assert.assertEquals(it.parsedBalance, 658.74)
             Assert.assertEquals(it.parsedDetails, "Detali pumb.ua/ib")
         }
@@ -109,11 +114,11 @@ class PumbOldFormatParserTest {
     @Test
     fun testWriteOffOtherPerson() {
         val plainSms = PlainSms(0, "", 0, 0, writeoffOtherPerson)
-        val transaction = pumbParser.parse(plainSms)
+        val transaction = pumbParserV1.parse(plainSms)
         Assert.assertNotNull(transaction)
         transaction?.let {
             Assert.assertEquals(it.parsedCardNumber, "*4906")
-            Assert.assertEquals(it.parsedInfoDate, SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2018-12-18 12:19"))
+            Assert.assertEquals(it.parsedInfoDate, pumbParserV1.dateFormat.parse("2018-12-18 12:19"))
             Assert.assertEquals(it.parsedBalance, 415.01)
             Assert.assertEquals(it.parsedDetails, "FUIBKIE CASH ADVANCE KIEV UA Detali pumb.u")
         }

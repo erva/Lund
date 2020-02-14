@@ -5,7 +5,7 @@ import io.erva.lund.data.mapper.RecostMapper
 import io.erva.lund.data.parser.notification.MonobankNotificationParser
 import io.erva.lund.data.parser.sms.AvalBankSmsParser
 import io.erva.lund.data.parser.sms.PrivatBankSmsParser
-import io.erva.lund.data.parser.sms.PumbSmsParser
+import io.erva.lund.data.parser.sms.PumbSmsParser_v3
 import io.erva.lund.data.parser.sms.UkrSibSmsBankParser
 import io.erva.lund.data.provider.notification.MONOBANK_PACKAGE
 import io.erva.lund.data.provider.notification.NotificationProvider
@@ -32,7 +32,7 @@ class DataProviderFactory {
             return when (data) {
                 Bank.PUMB ->
                     SmsProvider("PUMB",
-                                PumbSmsParser(), RecostMapper(), RecostLayout())
+                                PumbSmsParser_v3(), RecostMapper(), RecostLayout())
                 Bank.PRIVATBANK ->
                     SmsProvider("PrivatBank",
                                 PrivatBankSmsParser(), RecostMapper(), RecostLayout())

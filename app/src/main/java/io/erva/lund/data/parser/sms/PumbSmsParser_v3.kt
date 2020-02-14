@@ -7,36 +7,45 @@ import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-@Deprecated(
-        "PUMB changed sms format",
-        ReplaceWith("PumbSmsParser", "io.erva.lund.data.parser.sms.PumbSmsParser"),
-        DeprecationLevel.WARNING)
-class PumbOldFormatSmsParser : Parser<PlainSms> {
+class PumbSmsParser_v3 : Parser<PlainSms> {
+
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
 
     override fun parse(plainSms: PlainSms): Transaction? {
         val transaction = Transaction(plainSms.dateSent, plainSms.address)
         val cardNumberPattern = Pattern.compile("(?>\\*)\\d{4}|(?=\\d{10}(\\d{4}))")
-        val infoDatePattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")
-        val balancePattern = Pattern.compile("(?<=BALANCE )([-]?\\d+.\\d+]?)(?=UAH)")
+        val infoDatePattern = Pattern.compile("(\\d{2})-(\\d{2})-(\\d{4}) (\\d{2}):(\\d{2})")
+        val balancePattern = Pattern.compile("(?<=Dostupno: )([-]?\\d+.\\d+]?)(?=UAH)")
 
         val cardNumberMatcher = cardNumberPattern.matcher(plainSms.body)
+        var cardNumber = "undefined"
         if (cardNumberMatcher.find()) {
             val number = cardNumberMatcher.group(0)
-            transaction.parsedCardNumber = if (!number.isBlank()) number else cardNumberMatcher.group(1)
+            cardNumber = if (!number.isBlank()) number else cardNumberMatcher.group(1)
+            transaction.parsedCardNumber = cardNumber
         }
 
-        transaction.parsedDetails = plainSms.body.substringAfterLast("UAH ")
-
         val infoDateMatcher = infoDatePattern.matcher(plainSms.body)
+        var date = "undefined"
         if (infoDateMatcher.find()) {
-            transaction.parsedInfoDate = SimpleDateFormat("yyyy-MM-dd HH:mm")
-                    .parse(infoDateMatcher.group(0).toString())
+            date = infoDateMatcher.group(0)
+            transaction.parsedInfoDate = dateFormat.parse(date)
         }
 
         val balanceMatcher = balancePattern.matcher(plainSms.body)
+        var balance = "undefined"
         if (balanceMatcher.find()) {
-            transaction.parsedBalance = balanceMatcher.group(0).toDouble()
+            balance = balanceMatcher.group(0)
+            transaction.parsedBalance = balance.toDouble()
         }
+
+        var details = plainSms.body.substringAfterLast("UAH").trim()
+        if (details.isEmpty()) {
+            val lines = plainSms.body.split("\n")
+            if (lines.size > 2) details = lines[1]
+            if (details.contains(cardNumber) || details.contains(date) || details.contains(balance))details = ""
+        }
+        transaction.parsedDetails = details.trim()
 
         val isAllSet = !transaction.parsedCardNumber.isNullOrEmpty() &&
                 transaction.parsedInfoDate != null &&
