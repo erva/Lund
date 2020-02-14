@@ -9,16 +9,20 @@ import io.erva.lund.data.mapper.DataItem
 
 class PlainLayout : Layout {
 
-    @SuppressLint("SimpleDateFormat")
-    override fun layoutData(context: Context, item: DataItem, clickIntent: Intent): RemoteViews {
+  @SuppressLint("SimpleDateFormat")
+  override fun layoutData(
+    context: Context,
+    item: DataItem,
+    clickIntent: Intent
+  ): RemoteViews {
 
-        val remoteViews = RemoteViews(context.packageName, R.layout.widget_transaction_item_plain)
+    val remoteViews = RemoteViews(context.packageName, R.layout.widget_transaction_item_plain)
 
-        remoteViews.apply {
-            setTextViewText(R.id.text, item.details)
-            setOnClickFillInIntent(R.id.root, clickIntent)
-        }
-
-        return remoteViews
+    remoteViews.apply {
+      setTextViewText(R.id.text, item.details)
+      setOnClickFillInIntent(R.id.root, clickIntent)
     }
+
+    return remoteViews
+  }
 }

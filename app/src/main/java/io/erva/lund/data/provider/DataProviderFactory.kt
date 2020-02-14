@@ -14,11 +14,17 @@ import io.erva.lund.widget.layout.PlainLayout
 import io.erva.lund.widget.layout.RecostLayout
 
 enum class Bank {
-    PUMB, PRIVATBANK, UKRSIBBANK, AVALBANK, MONOBANK, UNDEFINED
+  PUMB,
+  PRIVATBANK,
+  UKRSIBBANK,
+  AVALBANK,
+  MONOBANK,
+  UNDEFINED
 }
 
 enum class SOURCE {
-    SMS, NOTIFICATION
+  SMS,
+  NOTIFICATION
 }
 
 /**
@@ -27,26 +33,36 @@ enum class SOURCE {
  */
 class DataProviderFactory {
 
-    companion object {
-        fun getDataProvider(data: Bank): DataProvider {
-            return when (data) {
-                Bank.PUMB ->
-                    SmsProvider("PUMB",
-                                PumbSmsParser_v3(), RecostMapper(), RecostLayout())
-                Bank.PRIVATBANK ->
-                    SmsProvider("PrivatBank",
-                                PrivatBankSmsParser(), RecostMapper(), RecostLayout())
-                Bank.UKRSIBBANK ->
-                    SmsProvider("UKRSIBBANK",
-                                UkrSibSmsBankParser(), RecostMapper(), RecostLayout())
-                Bank.AVALBANK ->
-                    SmsProvider("10901" /*"Raiffeisen"*/,
-                                AvalBankSmsParser(), RecostMapper(), RecostLayout())
-                Bank.MONOBANK ->
-                    NotificationProvider(MONOBANK_PACKAGE,
-                                         MonobankNotificationParser(), PlainMapper(), PlainLayout())
-                else -> throw IllegalArgumentException()
-            }
-        }
+  companion object {
+    fun getDataProvider(data: Bank): DataProvider {
+      return when (data) {
+        Bank.PUMB ->
+          SmsProvider(
+              "PUMB",
+              PumbSmsParser_v3(), RecostMapper(), RecostLayout()
+          )
+        Bank.PRIVATBANK ->
+          SmsProvider(
+              "PrivatBank",
+              PrivatBankSmsParser(), RecostMapper(), RecostLayout()
+          )
+        Bank.UKRSIBBANK ->
+          SmsProvider(
+              "UKRSIBBANK",
+              UkrSibSmsBankParser(), RecostMapper(), RecostLayout()
+          )
+        Bank.AVALBANK ->
+          SmsProvider(
+              "10901" /*"Raiffeisen"*/,
+              AvalBankSmsParser(), RecostMapper(), RecostLayout()
+          )
+        Bank.MONOBANK ->
+          NotificationProvider(
+              MONOBANK_PACKAGE,
+              MonobankNotificationParser(), PlainMapper(), PlainLayout()
+          )
+        else -> throw IllegalArgumentException()
+      }
     }
+  }
 }

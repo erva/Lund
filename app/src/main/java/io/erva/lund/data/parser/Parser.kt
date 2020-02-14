@@ -2,5 +2,5 @@ package io.erva.lund.data.parser
 
 interface Parser<SOURCE> {
 
-    fun parse(source: SOURCE): Transaction?
+  fun parse(source: SOURCE): Transaction?
 }

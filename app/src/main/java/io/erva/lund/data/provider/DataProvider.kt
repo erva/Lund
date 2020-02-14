@@ -6,7 +6,7 @@ import io.erva.lund.widget.layout.Layout
 
 interface DataProvider {
 
-    fun getLayout(): Layout
+  fun getLayout(): Layout
 
-    fun provide(context: Context): List<DataItem>
+  fun provide(context: Context): List<DataItem>
 }

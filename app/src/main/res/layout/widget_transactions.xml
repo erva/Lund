@@ -6,4 +6,5 @@
     android:layout_height="match_parent"
     android:background="@drawable/appwidget_transparent_bg"
     android:divider="@color/color_widget_divider"
-    android:dividerHeight="1dp"/>
+    android:dividerHeight="1dp"
+    />

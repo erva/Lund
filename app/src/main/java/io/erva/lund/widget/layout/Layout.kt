@@ -7,5 +7,9 @@ import io.erva.lund.data.mapper.DataItem
 
 interface Layout {
 
-    fun layoutData(context: Context, item: DataItem, clickIntent: Intent): RemoteViews
+  fun layoutData(
+    context: Context,
+    item: DataItem,
+    clickIntent: Intent
+  ): RemoteViews
 }
