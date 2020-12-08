@@ -1,11 +1,12 @@
 package io.erva.lund.data.parser
 
-import io.erva.lund.data.sms.PlainSms
-import java.util.*
+import java.util.Date
 
 data class Transaction(
-        val plainSms: PlainSms,
-        var parsedCardNumber: String? = null,
-        var parsedInfoDate: Date? = null,
-        var parsedBalance: Double? = null,
-        var parsedLocation: String? = null)
+  val eventTimestamp: Long = 0,
+  val smsAddress: String = "",
+  var parsedCardNumber: String? = null,
+  var parsedInfoDate: Date? = null,
+  var parsedBalance: Double? = null,
+  var parsedDetails: String = ""
+)

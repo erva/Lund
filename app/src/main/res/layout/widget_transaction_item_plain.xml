@@ -5,6 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
     android:padding="8dp"
     >
 
@@ -28,42 +29,27 @@
       tools:text=" 01/08 12:45"
       />
 
-  <LinearLayout
-      android:id="@+id/difference_holder"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentEnd="true"
-      >
-
-    <TextView
-        android:id="@+id/difference"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textColor="@color/color_widget_text"
-        android:textSize="23sp"
-        tools:text="+10000"
-        />
-
-    <ImageView
-        android:id="@+id/recost"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:src="@android:drawable/star_off"
-        />
-
-  </LinearLayout>
-
   <TextView
-      android:id="@+id/balance"
+      android:id="@+id/difference"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/difference_holder"
       android:layout_alignParentEnd="true"
       android:singleLine="true"
       android:textColor="@color/color_widget_text"
-      android:textSize="38sp"
-      tools:text="200000"
+      android:textSize="23sp"
+      tools:text="+10000"
+      />
+
+  <TextView
+      android:id="@+id/text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/difference"
+      android:layout_alignParentEnd="true"
+      android:gravity="end"
+      android:textColor="@color/color_widget_text"
+      android:textSize="20sp"
+      tools:text="100 SEK Cashback 10 SEK\nCOOP MARTENSTORGET"
       />
 
 </RelativeLayout>

@@ -1,7 +1,7 @@
 package io.erva.lund.data.mapper
 
 import io.erva.lund.data.parser.Transaction
-import java.util.*
+import java.util.Date
 
 /**
  * Takes 2 sms n, n-1 and calculates balance difference
@@ -18,30 +18,32 @@ private const val RECOST_DELAY = 2 * 60 * 60 * 1000
 
 class RecostMapper : DataMapper {
 
-    override fun map(transactions: List<Transaction>): List<DataItem> {
-        val size = transactions.size
-        val dataItems = mutableListOf<DataItem>()
-        for (i in 0 until size - 1) {
-            val transaction = transactions[i]
+  override fun map(transactions: List<Transaction>): List<DataItem> {
+    val size = transactions.size
+    val dataItems = mutableListOf<DataItem>()
+    for (i in 0 until size - 1) {
+      val transaction = transactions[i]
 
-            val previous = transactions[i + 1].parsedBalance!!
-            val current = transaction.parsedBalance!!
-            val difference = current - previous
+      val previous = transactions[i + 1].parsedBalance!!
+      val current = transaction.parsedBalance!!
+      val difference = current - previous
 
-            val dateSent = Date(transaction.plainSms.dateSent)
-            val parsedDate = transaction.parsedInfoDate!!
+      val dateSent = Date(transaction.eventTimestamp)
+      val parsedDate = transaction.parsedInfoDate!!
 
-            dataItems.add(DataItem(
-                    address = transaction.plainSms.address,
-                    card = transaction.parsedCardNumber!!,
-                    dateSent = dateSent,
-                    difference = difference,
-                    balance = current,
-                    parsedDate = parsedDate,
-                    recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY,
-                    location = transaction.parsedLocation
-            ))
-        }
-        return dataItems
+      dataItems.add(
+          DataItem(
+              address = transaction.smsAddress,
+              card = transaction.parsedCardNumber!!,
+              dateSent = dateSent,
+              difference = difference,
+              balance = current,
+              parsedDate = parsedDate,
+              recost = Math.abs(dateSent.time - parsedDate.time) > RECOST_DELAY,
+              details = transaction.parsedDetails
+          )
+      )
     }
+    return dataItems
+  }
 }

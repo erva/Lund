@@ -4,5 +4,5 @@ import io.erva.lund.data.parser.Transaction
 
 interface DataMapper {
 
-    fun map(transactions: List<Transaction>): List<DataItem>
+  fun map(transactions: List<Transaction>): List<DataItem>
 }
