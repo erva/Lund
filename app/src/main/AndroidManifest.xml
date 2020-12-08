@@ -35,12 +35,12 @@
 
       <meta-data
           android:name="android.appwidget.provider"
-          android:resource="@xml/widget_transactions"></meta-data>
+          android:resource="@xml/widget_transactions" />
     </receiver>
 
     <service
         android:name="io.erva.lund.widget.TransactionsAdapterService"
-        android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     <service
         android:name=".data.provider.notification.MonobankNotificationListenerService"

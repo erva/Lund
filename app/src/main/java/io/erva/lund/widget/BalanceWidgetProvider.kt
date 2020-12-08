@@ -27,25 +27,18 @@ class BalanceWidgetProvider : AppWidgetProvider() {
 
   private val updateHandler = Handler()
 
-  override fun onReceive(
-    context: Context,
-    intent: Intent
-  ) {
-    when {
-      intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> onDataUpdated(context)
-      intent.action == ACTION_ON_NEW_NOTIFICATION -> onDataUpdated(context)
-      intent.action == ACTION_ON_CLICK -> onClick(
+  override fun onReceive(context: Context, intent: Intent) {
+    when (intent.action) {
+      Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> onDataUpdated(context)
+      ACTION_ON_NEW_NOTIFICATION -> onDataUpdated(context)
+      ACTION_ON_CLICK -> onClick(
           context, intent.getParcelableExtra(EXTRA_DATA_ITEM)
       )
       else -> super.onReceive(context, intent)
     }
   }
 
-  override fun onUpdate(
-    context: Context,
-    appWidgetManager: AppWidgetManager,
-    appWidgetIds: IntArray
-  ) {
+  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     appWidgetIds.forEach {
       val remoteView = RemoteViews(context.packageName, R.layout.widget_transactions)
       val adapterIntent = Intent(context, TransactionsAdapterService::class.java)
@@ -65,10 +58,7 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }
   }
 
-  override fun onDeleted(
-    context: Context?,
-    appWidgetIds: IntArray?
-  ) {
+  override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
     context?.let {
       appWidgetIds?.forEach { widgetId ->
         PrefStorage().removeWidgetBank(context, widgetId)
@@ -87,22 +77,17 @@ class BalanceWidgetProvider : AppWidgetProvider() {
     }, 1000)
   }
 
-  private fun onClick(
-    context: Context,
-    dataItem: DataItem?
-  ) {
+  private fun onClick(context: Context, dataItem: DataItem?) {
     dataItem?.let {
-      if (!dataItem.details.isNullOrEmpty()) Toast.makeText(
-          context, dataItem.details, Toast.LENGTH_SHORT
-      ).show()
-      else openSmsApp(context, dataItem)
+      if (!dataItem.details.isNullOrEmpty()) {
+        Toast.makeText(context, dataItem.details, Toast.LENGTH_SHORT).show()
+      } else {
+        openSmsApp(context, dataItem)
+      }
     }
   }
 
-  private fun openSmsApp(
-    context: Context,
-    dataItem: DataItem
-  ) {
+  private fun openSmsApp(context: Context, dataItem: DataItem) {
     val smsAppIntent = Intent(
         Intent.ACTION_VIEW,
         Uri.fromParts("sms", dataItem.address, null)
@@ -119,10 +104,8 @@ class TransactionsAdapterService : RemoteViewsService() {
   }
 }
 
-class TransactionsListFactory(
-  private val context: Context,
-  private val intent: Intent
-) : RemoteViewsService.RemoteViewsFactory {
+class TransactionsListFactory(private val context: Context, private val intent: Intent) :
+    RemoteViewsService.RemoteViewsFactory {
 
   private val items: MutableList<DataItem> = mutableListOf()
   private lateinit var dataProvider: DataProvider
